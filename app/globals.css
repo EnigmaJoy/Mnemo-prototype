@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* ─── Static color tokens ─────────────────────────────────────────────────── */
+@theme {
+  --color-mnemo-bg:            #f5f1ea;
+  --color-mnemo-ink:           #18160f;
+  --color-mnemo-ink-secondary: #7a7568;
+  --color-mnemo-ink-tertiary:  #b0aa9c;
+  --color-mnemo-surface:       #ebe5d8;
+  --color-mnemo-border:        #ddd6c5;
+  --color-mnemo-gold:          #c4a35a;
+  --color-mnemo-dark:          #18160f;
+}
+
+/* ─── Font tokens (inline — resolved at runtime by next/font) ─────────────── */
+@theme inline {
+  --font-cormorant: var(--font-cormorant);
+  --font-dm-sans:   var(--font-dm-sans);
+  --font-dm-mono:   var(--font-dm-mono);
+}
+
+/* ─── Animation tokens ────────────────────────────────────────────────────── */
+@theme {
+  --animate-slide-fade-in: slide-fade-in 0.5s ease forwards;
+}
+
+@keyframes slide-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Base styles ─────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: #f5f1ea;
+  color: #18160f;
+  -webkit-font-smoothing: antialiased;
+}
