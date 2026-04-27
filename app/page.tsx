@@ -1,65 +1,111 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Logo from '@/components/Logo';
+import BottomNav from '@/components/BottomNav';
+import FragmentItem from '@/components/FragmentItem';
+import ResurfaceBanner from '@/components/ResurfaceBanner';
+import { getFragments, getResurfacingHistory, isStorageAvailable } from '@/lib/storage';
+import { getResurfacingCandidate } from '@/lib/resurfacing';
+import type { Fragment, ResurfacingCandidate } from '@/lib/types';
+
+const DISMISSED_KEY = 'mnemo_dismissed';
+
+function getSessionDismissed(): string[] {
+  try {
+    const raw = sessionStorage.getItem(DISMISSED_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function addSessionDismissed(id: string): void {
+  try {
+    const current = getSessionDismissed();
+    sessionStorage.setItem(DISMISSED_KEY, JSON.stringify([...current, id]));
+  } catch { /* noop */ }
+}
+
+export default function HomePage() {
+  const [fragments,  setFragments]  = useState<Fragment[]>([]);
+  const [candidate,  setCandidate]  = useState<ResurfacingCandidate | null>(null);
+  const [storageOk,  setStorageOk]  = useState(true);
+
+  useEffect(() => {
+    setStorageOk(isStorageAvailable());
+    const all       = getFragments();
+    const history   = getResurfacingHistory();
+    const dismissed = getSessionDismissed();
+
+    setFragments(all.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)));
+    setCandidate(getResurfacingCandidate(all, history, dismissed));
+  }, []);
+
+  function handleDismiss() {
+    if (!candidate) return;
+    addSessionDismissed(candidate.fragment.id);
+    setCandidate(null);
+  }
+
+  const recent = fragments.slice(0, 5);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen pb-20">
+      {/* Top bar */}
+      <header className="flex items-center justify-between px-4 pt-12 pb-4">
+        <Logo />
+      </header>
+
+      <main className="px-4">
+        {/* Storage warning */}
+        {!storageOk && (
+          <div className="mb-4 px-3 py-2.5 rounded-lg border border-mnemo-border bg-mnemo-surface">
+            <p className="font-dm-sans text-mnemo-ink-secondary leading-relaxed" style={{ fontSize: '12px' }}>
+              Mnemo works best when storage is available. Some browsers block this in private mode.
+            </p>
+          </div>
+        )}
+
+        {/* Resurfacing banner */}
+        {candidate && (
+          <ResurfaceBanner
+            fragment={candidate.fragment}
+            triggerType={candidate.triggerType}
+            onDismiss={handleDismiss}
+          />
+        )}
+
+        {/* Recent fragments */}
+        {recent.length === 0 ? (
+          <div className="pt-8 pb-4">
+            <p className="font-cormorant italic text-mnemo-ink-secondary leading-relaxed" style={{ fontSize: '16px' }}>
+              Nothing here yet. Start with one thought — anything you&apos;d want to find a year from now.
+            </p>
+          </div>
+        ) : (
+          <div>
+            {recent.map(f => (
+              <FragmentItem key={f.id} fragment={f} lines={2} />
+            ))}
+          </div>
+        )}
       </main>
+
+      {/* FAB */}
+      <Link
+        href="/capture"
+        className="fixed bottom-20 right-4 w-12 h-12 bg-mnemo-ink text-mnemo-bg rounded-full flex items-center justify-center shadow-lg"
+        aria-label="New fragment"
+        style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+        </svg>
+      </Link>
+
+      <BottomNav />
     </div>
   );
 }
