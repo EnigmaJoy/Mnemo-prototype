@@ -71,13 +71,10 @@ export default function RecordingSphere({ stream, size = 200 }: Props) {
 
       for (let i = 0; i < points.length; i++) {
         const p = points[i];
-        let x = p.x * cosT - p.z * sinT;
-        let z = p.x * sinT + p.z * cosT;
-        let y = p.y;
-        const yy = y * cosA - z * sinA;
-        const zz = y * sinA + z * cosA;
-        y = yy;
-        z = zz;
+        const x = p.x * cosT - p.z * sinT;
+        const z0 = p.x * sinT + p.z * cosT;
+        const y = p.y * cosA - z0 * sinA;
+        const z = p.y * sinA + z0 * cosA;
 
         const bin = data[i % data.length] / 255;
         const wobble = (Math.sin(tNow * 6 + i * 0.7) * 0.5 + 0.5) * bin * 6;

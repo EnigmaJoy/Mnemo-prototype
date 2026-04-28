@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { saveFragment } from '@/lib/storage';
 import { saveAudioBlob } from '@/lib/audio/db';
 import { AudioRecorder, isAudioRecordingSupported } from '@/lib/audio/recorder';
+import RecordingSphere from '@/components/RecordingSphere';
+import AudioPlayer from '@/components/AudioPlayer';
 import type { Fragment } from '@/lib/types';
 
 const MAX_CHARS = 2000;
@@ -57,10 +59,10 @@ export default function CapturePage() {
   const [recState, setRecState] = useState<RecState>('idle');
   const [recError, setRecError] = useState<string | null>(null);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
-  const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
   const [seconds, setSeconds] = useState(0);
   const [transcript, setTranscript] = useState('');
   const [modelProgress, setModelProgress] = useState<number | null>(null);
+  const [micStream, setMicStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect --
@@ -80,25 +82,17 @@ export default function CapturePage() {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  // revoke object URL when blob changes or component unmounts
-  useEffect(() => {
-    return () => {
-      if (recordedUrl) URL.revokeObjectURL(recordedUrl);
-    };
-  }, [recordedUrl]);
-
   const resetAudio = () => {
     if (recorderRef.current) {
       recorderRef.current.cancel();
     }
-    if (recordedUrl) URL.revokeObjectURL(recordedUrl);
     setRecState('idle');
     setRecordedBlob(null);
-    setRecordedUrl(null);
     setSeconds(0);
     setTranscript('');
     setModelProgress(null);
     setRecError(null);
+    setMicStream(null);
   };
 
   const handleTabChange = (next: Mode) => {
@@ -116,6 +110,7 @@ export default function CapturePage() {
     try {
       recorderRef.current = new AudioRecorder();
       await recorderRef.current.start();
+      setMicStream(recorderRef.current.getStream());
       setSeconds(0);
       setRecState('recording');
     } catch {
@@ -130,9 +125,10 @@ export default function CapturePage() {
     try {
       const blob = await rec.stop();
       setRecordedBlob(blob);
-      setRecordedUrl(URL.createObjectURL(blob));
+      setMicStream(null);
       setRecState('recorded');
     } catch {
+      setMicStream(null);
       setRecState('failed');
       setRecError(t('capture.record.transcriptionFailed'));
     }
@@ -343,12 +339,13 @@ export default function CapturePage() {
         <RecordPanel
           recState={recState}
           recError={recError}
-          recordedUrl={recordedUrl}
+          recordedBlob={recordedBlob}
           seconds={seconds}
           transcript={transcript}
           onTranscriptChange={setTranscript}
           modelProgress={modelProgress}
           audioSupported={audioSupported}
+          micStream={micStream}
           onStart={handleStartRecord}
           onStop={handleStopRecord}
           onRerecord={resetAudio}
@@ -363,12 +360,13 @@ export default function CapturePage() {
 interface RecordPanelProps {
   recState: RecState;
   recError: string | null;
-  recordedUrl: string | null;
+  recordedBlob: Blob | null;
   seconds: number;
   transcript: string;
   onTranscriptChange: (s: string) => void;
   modelProgress: number | null;
   audioSupported: boolean;
+  micStream: MediaStream | null;
   onStart: () => void;
   onStop: () => void;
   onRerecord: () => void;
@@ -379,12 +377,13 @@ interface RecordPanelProps {
 function RecordPanel({
   recState,
   recError,
-  recordedUrl,
+  recordedBlob,
   seconds,
   transcript,
   onTranscriptChange,
   modelProgress,
   audioSupported,
+  micStream,
   onStart,
   onStop,
   onRerecord,
@@ -421,12 +420,15 @@ function RecordPanel({
 
       {recState === 'recording' && (
         <>
-          <div
-            className="font-cormorant font-light text-mnemo-ink leading-none mb-8 tabular-nums"
-            style={{ fontSize: '56px' }}
-            aria-live="polite"
-          >
-            {remainingSeconds}
+          <div className="relative mb-8 flex items-center justify-center" style={{ width: 240, height: 240 }}>
+            <RecordingSphere stream={micStream} size={240} />
+            <div
+              className="pointer-events-none absolute inset-0 flex items-center justify-center font-cormorant font-light text-mnemo-ink leading-none tabular-nums"
+              style={{ fontSize: '56px' }}
+              aria-live="polite"
+            >
+              {remainingSeconds}
+            </div>
           </div>
           <button
             type="button"
@@ -441,9 +443,11 @@ function RecordPanel({
         </>
       )}
 
-      {recState === 'recorded' && recordedUrl && (
+      {recState === 'recorded' && recordedBlob && (
         <>
-          <audio src={recordedUrl} controls className="w-full mb-6" />
+          <div className="w-full mb-6">
+            <AudioPlayer blob={recordedBlob} />
+          </div>
           <div className="flex gap-3">
             <button
               type="button"
@@ -481,9 +485,11 @@ function RecordPanel({
         </div>
       )}
 
-      {recState === 'edit' && recordedUrl && (
+      {recState === 'edit' && recordedBlob && (
         <div className="w-full">
-          <audio src={recordedUrl} controls className="w-full mb-4" />
+          <div className="w-full mb-4">
+            <AudioPlayer blob={recordedBlob} />
+          </div>
           <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary mb-2">
             {t('capture.record.transcriptHint')}
           </p>
