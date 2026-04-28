@@ -16,7 +16,53 @@
   "home": {
     "storageUnavailable": "Mnemo funziona al meglio quando è disponibile lo spazio di archiviazione. Alcuni browser lo bloccano in modalità privata.",
     "empty": "Ancora nulla qui. Comincia con un pensiero — qualcosa che vorresti ritrovare fra un anno.",
-    "newFragmentAria": "Nuovo frammento"
+    "newFragmentAria": "Nuovo frammento",
+    "firstResurfacing": {
+      "label": "Prima riemersione",
+      "message_one": "Tra {{count}} giorno, il tuo primo pensiero tornerà.",
+      "message_other": "Tra {{count}} giorni, il tuo primo pensiero tornerà.",
+      "empty": "Salva il tuo primo pensiero — tornerà fra 7 giorni."
+    },
+    "stats": {
+      "fragments": "Frammenti",
+      "days": "Giorni",
+      "recurringWord": "Parola ricorrente"
+    },
+    "dailyPrompt": {
+      "label": "Domanda di oggi",
+      "prompts": [
+        "What did you learn today that you'd want to remember?",
+        "What surprised you this week?",
+        "What would you want to find here a year from now?",
+        "What decision are you facing right now?",
+        "What are you afraid of losing?",
+        "What has changed in you recently?",
+        "What do you keep coming back to?",
+        "What did you almost say, but didn't?",
+        "What do you want to remember about today?",
+        "What is pulling your attention right now?",
+        "What belief of yours has shifted lately?",
+        "What would your future self thank you for noticing?",
+        "What is something you understood differently today?",
+        "What are you holding onto that you might need to release?",
+        "What made you feel most like yourself recently?",
+        "What question keeps coming back to you?",
+        "What do you know now that you didn't know a month ago?",
+        "What are you becoming?",
+        "What would you regret not writing down?",
+        "What is quietly true about your life right now?",
+        "What are you grateful for that you haven't said out loud?",
+        "What has been harder than you expected?",
+        "What has been easier than you expected?",
+        "What do you want to remember about this phase of your life?",
+        "What are you pretending not to know?",
+        "What small thing has mattered more than expected?",
+        "What conversation changed something in you?",
+        "What have you been avoiding thinking about?",
+        "What do you stand for right now?",
+        "What is the most honest thing you could write today?"
+      ]
+    }
   },
   "capture": {
     "title": "Nuovo frammento",

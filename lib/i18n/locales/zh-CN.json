@@ -16,7 +16,52 @@
   "home": {
     "storageUnavailable": "当存储可用时，Mnemo 才能正常工作。某些浏览器在隐私模式下会阻止存储。",
     "empty": "这里还什么都没有。从一个想法开始——任何你希望一年后还能找到的东西。",
-    "newFragmentAria": "新的片段"
+    "newFragmentAria": "新的片段",
+    "firstResurfacing": {
+      "label": "首次浮现",
+      "message_other": "{{count}} 天后，你的第一个想法将回来。",
+      "empty": "记下你的第一个想法——它会在 7 天后回来。"
+    },
+    "stats": {
+      "fragments": "片段",
+      "days": "天数",
+      "recurringWord": "常出现的词"
+    },
+    "dailyPrompt": {
+      "label": "今日提问",
+      "prompts": [
+        "What did you learn today that you'd want to remember?",
+        "What surprised you this week?",
+        "What would you want to find here a year from now?",
+        "What decision are you facing right now?",
+        "What are you afraid of losing?",
+        "What has changed in you recently?",
+        "What do you keep coming back to?",
+        "What did you almost say, but didn't?",
+        "What do you want to remember about today?",
+        "What is pulling your attention right now?",
+        "What belief of yours has shifted lately?",
+        "What would your future self thank you for noticing?",
+        "What is something you understood differently today?",
+        "What are you holding onto that you might need to release?",
+        "What made you feel most like yourself recently?",
+        "What question keeps coming back to you?",
+        "What do you know now that you didn't know a month ago?",
+        "What are you becoming?",
+        "What would you regret not writing down?",
+        "What is quietly true about your life right now?",
+        "What are you grateful for that you haven't said out loud?",
+        "What has been harder than you expected?",
+        "What has been easier than you expected?",
+        "What do you want to remember about this phase of your life?",
+        "What are you pretending not to know?",
+        "What small thing has mattered more than expected?",
+        "What conversation changed something in you?",
+        "What have you been avoiding thinking about?",
+        "What do you stand for right now?",
+        "What is the most honest thing you could write today?"
+      ]
+    }
   },
   "capture": {
     "title": "新的片段",

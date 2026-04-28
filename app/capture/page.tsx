@@ -10,6 +10,7 @@ import type { Fragment } from '@/lib/types';
 const MAX_CHARS = 2000;
 const COUNTER_RED_OVER = 1900;
 const SAVED_REDIRECT_MS = 1500;
+const PROMPT_STORAGE_KEY = 'mnemo_capture_prompt';
 
 function timeOfDayKey(hour: number): string {
   if (hour >= 5  && hour <= 11) return 'capture.morning';
@@ -33,11 +34,23 @@ export default function CapturePage() {
   const [content, setContent] = useState('');
   const [saved, setSaved] = useState(false);
   const [contextNow, setContextNow] = useState<Date | null>(null);
+  const [placeholderOverride, setPlaceholderOverride] = useState<string | null>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of wall-clock time on mount
+    /* eslint-disable react-hooks/set-state-in-effect --
+       one-time read of wall-clock time + sessionStorage prompt on mount */
+    try {
+      const stored = sessionStorage.getItem(PROMPT_STORAGE_KEY);
+      if (stored) {
+        setPlaceholderOverride(stored);
+        sessionStorage.removeItem(PROMPT_STORAGE_KEY);
+      }
+    } catch {
+      // sessionStorage unavailable — fall back to default placeholder
+    }
     setContextNow(new Date());
     textareaRef.current?.focus();
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const canSave = content.trim().length > 0 && !saved;
@@ -109,7 +122,7 @@ export default function CapturePage() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               maxLength={MAX_CHARS}
-              placeholder={t('capture.placeholder')}
+              placeholder={placeholderOverride ?? t('capture.placeholder')}
               rows={6}
               className="w-full bg-transparent border-0 outline-none resize-none font-cormorant italic text-[18px] leading-relaxed text-mnemo-ink placeholder:text-mnemo-ink-tertiary py-2 min-h-[160px]"
             />

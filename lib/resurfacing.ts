@@ -24,6 +24,10 @@ export function getTriggerType(days: number): Resurface['triggerType'] | null {
   return null;
 }
 
+export function hasHadFirstResurfacing(history: Resurface[]): boolean {
+  return history.some((r) => r.shownAt !== null);
+}
+
 /**
  * Selects at most one fragment to resurface. Pure — caller supplies inputs.
  * Excludes fragments already reacted to (any non-null reaction) and any

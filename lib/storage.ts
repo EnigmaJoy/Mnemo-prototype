@@ -56,6 +56,18 @@ export function deleteFragment(id: string): void {
   writeJSON(FRAGMENTS_KEY, all);
 }
 
+export function getFragmentsSavedToday(): number {
+  const all = getFragments();
+  const t = new Date();
+  const y = t.getFullYear();
+  const m = t.getMonth();
+  const d = t.getDate();
+  return all.filter((f) => {
+    const fd = new Date(f.createdAt);
+    return fd.getFullYear() === y && fd.getMonth() === m && fd.getDate() === d;
+  }).length;
+}
+
 export function getResurfacingHistory(): Resurface[] {
   return readJSON<Resurface>(RESURFACING_KEY);
 }
