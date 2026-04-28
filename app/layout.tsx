@@ -58,13 +58,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-full flex flex-col bg-mnemo-bg text-mnemo-ink font-dm-sans">
         <I18nProvider>{children}</I18nProvider>
         <Script id="mnemo-sw-register" strategy="afterInteractive">
-          {`
-            if ('serviceWorker' in navigator) {
-              window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/sw.js').catch(function () {});
-              });
-            }
-          `}
+          {process.env.NODE_ENV === 'production'
+            ? `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function () {
+                  navigator.serviceWorker.register('/sw.js').catch(function () {});
+                });
+              }
+            `
+            : `
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function (regs) {
+                  regs.forEach(function (r) { r.unregister(); });
+                });
+              }
+              if (typeof caches !== 'undefined') {
+                caches.keys().then(function (keys) {
+                  keys.forEach(function (k) { caches.delete(k); });
+                });
+              }
+            `}
         </Script>
       </body>
     </html>

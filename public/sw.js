@@ -1,5 +1,7 @@
-// public/sw.js - Mnemo cache-first service worker
-const CACHE_NAME = 'mnemo-v1';
+// public/sw.js - Mnemo service worker
+// Network-first for HTML navigations (so app-shell updates reach users),
+// cache-first for everything else (Next.js assets are hashed → safe).
+const CACHE_NAME = 'mnemo-v2';
 const PRECACHE_URLS = ['/', '/capture', '/archive'];
 
 self.addEventListener('install', (event) => {
@@ -32,6 +34,25 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
+  // Network-first for HTML navigations: always try fresh, fall back to cache offline.
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (res && res.ok && res.type === 'basic') {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+          }
+          return res;
+        })
+        .catch(() =>
+          caches.match(req).then((cached) => cached || caches.match('/'))
+        )
+    );
+    return;
+  }
+
+  // Cache-first for assets (JS/CSS/icons). Next.js asset URLs are content-hashed.
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
