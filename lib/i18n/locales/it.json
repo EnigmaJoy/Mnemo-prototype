@@ -15,13 +15,13 @@
   },
   "home": {
     "storageUnavailable": "Mnemo funziona al meglio quando è disponibile lo spazio di archiviazione. Alcuni browser lo bloccano in modalità privata.",
-    "empty": "Ancora nulla qui. Comincia con un pensiero — qualcosa che vorresti ritrovare fra un anno.",
+    "empty": "Ancora nulla qui. Comincia con un pensiero - qualcosa che vorresti ritrovare fra un anno.",
     "newFragmentAria": "Nuovo frammento",
     "firstResurfacing": {
       "label": "Prima riemersione",
       "message_one": "Tra {{count}} giorno, il tuo primo pensiero tornerà.",
       "message_other": "Tra {{count}} giorni, il tuo primo pensiero tornerà.",
-      "empty": "Salva il tuo primo pensiero — tornerà fra 7 giorni."
+      "empty": "Salva il tuo primo pensiero - tornerà fra 7 giorni."
     },
     "stats": {
       "fragments": "Frammenti",
@@ -29,7 +29,7 @@
       "recurringWord": "Parola ricorrente"
     },
     "dailyPrompt": {
-      "label": "Domanda di oggi",
+      "label": "Spunto",
       "prompts": [
         "What did you learn today that you'd want to remember?",
         "What surprised you this week?",
@@ -71,7 +71,25 @@
     "morning": "Mattina",
     "afternoon": "Pomeriggio",
     "evening": "Sera",
-    "night": "Notte"
+    "night": "Notte",
+    "tabs": {
+      "write": "Scrivi",
+      "record": "Registra"
+    },
+    "record": {
+      "notSupported": "La registrazione audio non è supportata su questo browser.",
+      "permissionDenied": "Accesso al microfono negato.",
+      "instruction": "Tocca il microfono per registrare fino a 30 secondi.",
+      "recording": "Registrazione…",
+      "stop": "Ferma",
+      "rerecord": "Registra di nuovo",
+      "transcribe": "Trascrivi",
+      "modelLoading": "Caricamento del modello vocale…",
+      "transcribing": "Trascrizione in corso…",
+      "transcriptHint": "Correggi il testo prima di salvare se necessario.",
+      "transcriptEmpty": "La trascrizione non può essere vuota.",
+      "transcriptionFailed": "Trascrizione fallita. Riprova."
+    }
   },
   "archive": {
     "title": "Archivio",
@@ -88,7 +106,9 @@
     "read": "Leggi →"
   },
   "fragmentItem": {
-    "removeConfirm": "Rimuovere questo frammento? L'azione è irreversibile."
+    "removeConfirm": "Rimuovere questo frammento? L'azione è irreversibile.",
+    "audioBadge": "Audio",
+    "playAria": "Riproduci registrazione"
   },
   "reactions": {
     "prompt": "Come ti sembra oggi?",

@@ -29,7 +29,7 @@ export function hasHadFirstResurfacing(history: Resurface[]): boolean {
 }
 
 /**
- * Selects at most one fragment to resurface. Pure — caller supplies inputs.
+ * Selects at most one fragment to resurface. Pure - caller supplies inputs.
  * Excludes fragments already reacted to (any non-null reaction) and any
  * dismissed via "Not now" this session. Among the rest, picks the most
  * recently created.

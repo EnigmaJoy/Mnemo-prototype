@@ -15,12 +15,12 @@
   },
   "home": {
     "storageUnavailable": "当存储可用时，Mnemo 才能正常工作。某些浏览器在隐私模式下会阻止存储。",
-    "empty": "这里还什么都没有。从一个想法开始——任何你希望一年后还能找到的东西。",
+    "empty": "这里还什么都没有。从一个想法开始--任何你希望一年后还能找到的东西。",
     "newFragmentAria": "新的片段",
     "firstResurfacing": {
       "label": "首次浮现",
       "message_other": "{{count}} 天后，你的第一个想法将回来。",
-      "empty": "记下你的第一个想法——它会在 7 天后回来。"
+      "empty": "记下你的第一个想法--它会在 7 天后回来。"
     },
     "stats": {
       "fragments": "片段",
@@ -28,7 +28,7 @@
       "recurringWord": "常出现的词"
     },
     "dailyPrompt": {
-      "label": "今日提问",
+      "label": "灵感",
       "prompts": [
         "What did you learn today that you'd want to remember?",
         "What surprised you this week?",
@@ -70,7 +70,25 @@
     "morning": "上午",
     "afternoon": "下午",
     "evening": "傍晚",
-    "night": "夜晚"
+    "night": "夜晚",
+    "tabs": {
+      "write": "书写",
+      "record": "录音"
+    },
+    "record": {
+      "notSupported": "此浏览器不支持音频录制。",
+      "permissionDenied": "麦克风访问被拒绝。",
+      "instruction": "点击麦克风开始录音，最长 30 秒。",
+      "recording": "录音中…",
+      "stop": "停止",
+      "rerecord": "重新录音",
+      "transcribe": "转录",
+      "modelLoading": "正在加载语音模型…",
+      "transcribing": "正在转录…",
+      "transcriptHint": "保存前可编辑文字内容。",
+      "transcriptEmpty": "文字内容不能为空。",
+      "transcriptionFailed": "转录失败。请重试。"
+    }
   },
   "archive": {
     "title": "归档",
@@ -86,7 +104,9 @@
     "read": "阅读 →"
   },
   "fragmentItem": {
-    "removeConfirm": "删除这个片段？此操作无法撤销。"
+    "removeConfirm": "删除这个片段？此操作无法撤销。",
+    "audioBadge": "音频",
+    "playAria": "播放录音"
   },
   "reactions": {
     "prompt": "今天看来如何？",

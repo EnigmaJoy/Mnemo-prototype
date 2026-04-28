@@ -23,7 +23,7 @@ export function detectInitialLocale(): Locale {
     const saved = localStorage.getItem(LOCALE_STORAGE_KEY);
     if (saved && isSupported(saved)) return saved;
   } catch {
-    // localStorage unavailable — fall through to navigator detection
+    // localStorage unavailable - fall through to navigator detection
   }
 
   const nav = navigator.language;

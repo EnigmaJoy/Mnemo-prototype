@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
 import FragmentItem from '@/components/FragmentItem';
 import { getFragments, deleteFragment } from '@/lib/storage';
+import { deleteAudioBlob } from '@/lib/audio/db';
 import { formatMonthYear } from '@/lib/datetime';
 import type { Fragment } from '@/lib/types';
 
@@ -38,6 +39,12 @@ export default function ArchivePage() {
   }, []);
 
   const handleDelete = (id: string) => {
+    const target = getFragments().find((f) => f.id === id);
+    if (target?.type === 'audio' && target.audioId) {
+      deleteAudioBlob(target.audioId).catch(() => {
+        // blob already gone or storage error - fragment metadata is the source of truth
+      });
+    }
     deleteFragment(id);
     reload();
   };

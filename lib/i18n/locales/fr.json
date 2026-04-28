@@ -15,13 +15,13 @@
   },
   "home": {
     "storageUnavailable": "Mnemo fonctionne mieux lorsque le stockage est disponible. Certains navigateurs le bloquent en mode privé.",
-    "empty": "Rien ici pour l'instant. Commence par une pensée — quelque chose que tu voudrais retrouver dans un an.",
+    "empty": "Rien ici pour l'instant. Commence par une pensée - quelque chose que tu voudrais retrouver dans un an.",
     "newFragmentAria": "Nouveau fragment",
     "firstResurfacing": {
       "label": "Première résurgence",
       "message_one": "Dans {{count}} jour, ta première pensée revient.",
       "message_other": "Dans {{count}} jours, ta première pensée revient.",
-      "empty": "Enregistre ta première pensée — elle reviendra dans 7 jours."
+      "empty": "Enregistre ta première pensée - elle reviendra dans 7 jours."
     },
     "stats": {
       "fragments": "Fragments",
@@ -29,7 +29,7 @@
       "recurringWord": "Mot récurrent"
     },
     "dailyPrompt": {
-      "label": "Question du jour",
+      "label": "Inspiration",
       "prompts": [
         "What did you learn today that you'd want to remember?",
         "What surprised you this week?",
@@ -71,7 +71,25 @@
     "morning": "Matin",
     "afternoon": "Après-midi",
     "evening": "Soir",
-    "night": "Nuit"
+    "night": "Nuit",
+    "tabs": {
+      "write": "Écrire",
+      "record": "Enregistrer"
+    },
+    "record": {
+      "notSupported": "L'enregistrement audio n'est pas pris en charge dans ce navigateur.",
+      "permissionDenied": "Accès au microphone refusé.",
+      "instruction": "Appuie sur le microphone pour enregistrer jusqu'à 30 secondes.",
+      "recording": "Enregistrement…",
+      "stop": "Arrêter",
+      "rerecord": "Réenregistrer",
+      "transcribe": "Transcrire",
+      "modelLoading": "Chargement du modèle vocal…",
+      "transcribing": "Transcription…",
+      "transcriptHint": "Modifie la transcription avant d'enregistrer si nécessaire.",
+      "transcriptEmpty": "La transcription ne peut pas être vide.",
+      "transcriptionFailed": "Transcription échouée. Réessaie."
+    }
   },
   "archive": {
     "title": "Archive",
@@ -88,7 +106,9 @@
     "read": "Lire →"
   },
   "fragmentItem": {
-    "removeConfirm": "Supprimer ce fragment ? Cette action est irréversible."
+    "removeConfirm": "Supprimer ce fragment ? Cette action est irréversible.",
+    "audioBadge": "Audio",
+    "playAria": "Lire l'enregistrement"
   },
   "reactions": {
     "prompt": "Comment cela te paraît aujourd'hui ?",

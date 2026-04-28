@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatShortDate } from '@/lib/datetime';
+import { getAudioBlob } from '@/lib/audio/db';
 import type { Fragment } from '@/lib/types';
 
 interface Props {
@@ -17,9 +18,37 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
   const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // suppresses the synthetic click that follows a completed long-press
   const longPressFired = useRef(false);
+
+  const isAudio = fragment.type === 'audio';
+
+  // load the blob lazily when the user expands an audio fragment
+  useEffect(() => {
+    if (!isAudio || !expanded || !fragment.audioId) return;
+    if (audioUrl) return;
+    let cancelled = false;
+    getAudioBlob(fragment.audioId)
+      .then((blob) => {
+        if (cancelled || !blob) return;
+        setAudioUrl(URL.createObjectURL(blob));
+      })
+      .catch(() => {
+        // blob missing or storage error - UI just won't show a player
+        console.error("Blob missing file");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAudio, expanded, fragment.audioId, audioUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+    };
+  }, [audioUrl]);
 
   const startPress = () => {
     if (!onDelete) return;
@@ -97,16 +126,51 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
       onMouseUp={cancelPress}
       onMouseLeave={cancelPress}
     >
-      <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary mb-2">
-        {formatShortDate(fragment.createdAt, i18n.language)}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary">
+          {formatShortDate(fragment.createdAt, i18n.language)}
+        </span>
+        {isAudio && (
+          <span className="font-dm-mono text-[9px] uppercase tracking-[0.18em] text-mnemo-gold border border-mnemo-gold/40 rounded-full px-2 py-0.5 inline-flex items-center gap-1">
+            <MicGlyph />
+            {t('fragmentItem.audioBadge')}
+          </span>
+        )}
       </div>
       <p className="font-cormorant italic text-mnemo-ink text-lg leading-relaxed whitespace-pre-wrap">
         {expanded ? fragment.content : preview}
         {truncated && <span className="text-mnemo-ink-tertiary"> …</span>}
       </p>
+      {expanded && isAudio && audioUrl && (
+        <audio
+          src={audioUrl}
+          controls
+          aria-label={t('fragmentItem.playAria')}
+          className="w-full mt-3"
+          onClick={(e) => e.stopPropagation()}
+        />
+      )}
     </article>
   );
 }
+
+const MicGlyph = () => (
+  <svg
+    width="9"
+    height="9"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <rect x="9" y="3" width="6" height="12" rx="3" />
+    <path d="M5 11a7 7 0 0 0 14 0" />
+    <line x1="12" y1="18" x2="12" y2="22" />
+  </svg>
+);
 
 function firstNLines(content: string, n: number): string {
   const lines = content.split('\n');

@@ -15,13 +15,13 @@
   },
   "home": {
     "storageUnavailable": "Mnemo works best when storage is available. Some browsers block this in private mode.",
-    "empty": "Nothing here yet. Start with one thought — anything you'd want to find a year from now.",
+    "empty": "Nothing here yet. Start with one thought - anything you'd want to find a year from now.",
     "newFragmentAria": "New fragment",
     "firstResurfacing": {
       "label": "First resurfacing",
       "message_one": "In {{count}} day, your first thought returns.",
       "message_other": "In {{count}} days, your first thought returns.",
-      "empty": "Save your first thought — it will return in 7 days."
+      "empty": "Save your first thought - it will return in 7 days."
     },
     "stats": {
       "fragments": "Fragments",
@@ -29,7 +29,7 @@
       "recurringWord": "Recurring word"
     },
     "dailyPrompt": {
-      "label": "Today's question",
+      "label": "Spark",
       "prompts": [
         "What did you learn today that you'd want to remember?",
         "What surprised you this week?",
@@ -71,7 +71,25 @@
     "morning": "Morning",
     "afternoon": "Afternoon",
     "evening": "Evening",
-    "night": "Night"
+    "night": "Night",
+    "tabs": {
+      "write": "Write",
+      "record": "Record"
+    },
+    "record": {
+      "notSupported": "Audio recording isn't supported in this browser.",
+      "permissionDenied": "Microphone access denied.",
+      "instruction": "Tap the microphone to record up to 30 seconds.",
+      "recording": "Recording…",
+      "stop": "Stop",
+      "rerecord": "Re-record",
+      "transcribe": "Transcribe",
+      "modelLoading": "Loading speech model…",
+      "transcribing": "Transcribing…",
+      "transcriptHint": "Edit the transcript before saving if needed.",
+      "transcriptEmpty": "Transcript can't be empty.",
+      "transcriptionFailed": "Couldn't transcribe. Try again."
+    }
   },
   "archive": {
     "title": "Archive",
@@ -88,7 +106,9 @@
     "read": "Read →"
   },
   "fragmentItem": {
-    "removeConfirm": "Remove this fragment? This cannot be undone."
+    "removeConfirm": "Remove this fragment? This cannot be undone.",
+    "audioBadge": "Audio",
+    "playAria": "Play recording"
   },
   "reactions": {
     "prompt": "How does it feel today?",

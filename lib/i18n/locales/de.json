@@ -15,13 +15,13 @@
   },
   "home": {
     "storageUnavailable": "Mnemo funktioniert am besten, wenn Speicher verfügbar ist. Manche Browser blockieren ihn im privaten Modus.",
-    "empty": "Hier ist noch nichts. Beginne mit einem Gedanken — etwas, das du in einem Jahr wiederfinden möchtest.",
+    "empty": "Hier ist noch nichts. Beginne mit einem Gedanken - etwas, das du in einem Jahr wiederfinden möchtest.",
     "newFragmentAria": "Neues Fragment",
     "firstResurfacing": {
       "label": "Erstes Auftauchen",
       "message_one": "In {{count}} Tag kehrt dein erster Gedanke zurück.",
       "message_other": "In {{count}} Tagen kehrt dein erster Gedanke zurück.",
-      "empty": "Speichere deinen ersten Gedanken — er kehrt in 7 Tagen wieder."
+      "empty": "Speichere deinen ersten Gedanken - er kehrt in 7 Tagen wieder."
     },
     "stats": {
       "fragments": "Fragmente",
@@ -29,7 +29,7 @@
       "recurringWord": "Wiederkehrendes Wort"
     },
     "dailyPrompt": {
-      "label": "Frage des Tages",
+      "label": "Anregung",
       "prompts": [
         "What did you learn today that you'd want to remember?",
         "What surprised you this week?",
@@ -71,7 +71,25 @@
     "morning": "Morgen",
     "afternoon": "Nachmittag",
     "evening": "Abend",
-    "night": "Nacht"
+    "night": "Nacht",
+    "tabs": {
+      "write": "Schreiben",
+      "record": "Aufnehmen"
+    },
+    "record": {
+      "notSupported": "Audioaufnahme wird in diesem Browser nicht unterstützt.",
+      "permissionDenied": "Mikrofonzugriff verweigert.",
+      "instruction": "Tippe auf das Mikrofon, um bis zu 30 Sekunden aufzunehmen.",
+      "recording": "Nimmt auf…",
+      "stop": "Stopp",
+      "rerecord": "Neu aufnehmen",
+      "transcribe": "Transkribieren",
+      "modelLoading": "Sprachmodell wird geladen…",
+      "transcribing": "Wird transkribiert…",
+      "transcriptHint": "Bearbeite den Text vor dem Speichern, falls nötig.",
+      "transcriptEmpty": "Die Transkription darf nicht leer sein.",
+      "transcriptionFailed": "Transkription fehlgeschlagen. Versuche es erneut."
+    }
   },
   "archive": {
     "title": "Archiv",
@@ -88,7 +106,9 @@
     "read": "Lesen →"
   },
   "fragmentItem": {
-    "removeConfirm": "Dieses Fragment entfernen? Das lässt sich nicht rückgängig machen."
+    "removeConfirm": "Dieses Fragment entfernen? Das lässt sich nicht rückgängig machen.",
+    "audioBadge": "Audio",
+    "playAria": "Aufnahme abspielen"
   },
   "reactions": {
     "prompt": "Wie fühlt es sich heute an?",

@@ -1,4 +1,4 @@
-// public/sw.js — Mnemo cache-first service worker
+// public/sw.js - Mnemo cache-first service worker
 const CACHE_NAME = 'mnemo-v1';
 const PRECACHE_URLS = ['/', '/capture', '/archive'];
 
@@ -28,7 +28,7 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
-  // Same-origin only — never cache cross-origin requests (analytics, fonts CDN, etc.)
+  // Same-origin only - never cache cross-origin requests (analytics, fonts CDN, etc.)
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 

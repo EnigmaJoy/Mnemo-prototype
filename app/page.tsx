@@ -35,11 +35,12 @@ const STOP_WORDS = new Set([
 ]);
 
 function findRecurringWord(fragments: Fragment[], locale: string): string | null {
-  if (fragments.length < 3) return null;
+  const textFragments = fragments.filter((f) => f.type !== 'audio');
+  if (textFragments.length < 3) return null;
   if (locale.startsWith('zh')) return null;
 
   const counts = new Map<string, number>();
-  for (const f of fragments) {
+  for (const f of textFragments) {
     const words = f.content.toLowerCase().split(/[^\p{L}\p{N}']+/u).filter(Boolean);
     for (const w of words) {
       if (w.length < 2 || STOP_WORDS.has(w)) continue;
@@ -107,7 +108,8 @@ export default function HomePage() {
 
     setRecurringWord(findRecurringWord(all, i18n.language));
     setSavedToday(getFragmentsSavedToday());
-    setTodaysPromptIdx(dayOfYear(new Date()) % PROMPTS_LENGTH);
+    const now = new Date();
+    setTodaysPromptIdx((dayOfYear(now) * 7 + now.getHours()) % PROMPTS_LENGTH);
 
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -133,7 +135,7 @@ export default function HomePage() {
     try {
       sessionStorage.setItem(PROMPT_STORAGE_KEY, todaysPrompt);
     } catch {
-      // sessionStorage unavailable — capture page falls back to the default placeholder
+      // sessionStorage unavailable - capture page falls back to the default placeholder
     }
     router.push('/capture');
   };
@@ -214,7 +216,7 @@ export default function HomePage() {
                 className="font-cormorant font-light text-mnemo-ink leading-none"
                 style={{ fontSize: '28px' }}
               >
-                {recurringWord ?? '—'}
+                {recurringWord ?? '-'}
               </div>
               <div className="font-dm-mono text-[9px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary mt-2">
                 {t('home.stats.recurringWord')}

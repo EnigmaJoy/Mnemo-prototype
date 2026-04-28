@@ -32,7 +32,7 @@ function writeJSON<T>(key: string, value: T[]): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // Quota exceeded or unavailable — silent no-op in prototype
+    // Quota exceeded or unavailable - silent no-op in prototype
   }
 }
 
@@ -89,7 +89,7 @@ export function updateResurfacing(
   writeJSON(RESURFACING_KEY, all);
 }
 
-// sessionStorage — "Not now" dismissals, cleared on browser close
+// sessionStorage - "Not now" dismissals, cleared on browser close
 export function getDismissedIds(): string[] {
   try {
     const raw = sessionStorage.getItem(DISMISSED_KEY);
@@ -108,6 +108,6 @@ export function addDismissedId(id: string): void {
     all.push(id);
     sessionStorage.setItem(DISMISSED_KEY, JSON.stringify(all));
   } catch {
-    // sessionStorage unavailable — banner still hides via component state for this page
+    // sessionStorage unavailable - banner still hides via component state for this page
   }
 }

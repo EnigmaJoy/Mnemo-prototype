@@ -34,7 +34,7 @@ const BG_DARK   = '#18160f';
 const PARCHMENT = '#f5f1ea';
 const GOLD      = '#c4a35a';
 
-// Stroke is given in viewBox units. The header logo uses 2.2 — too thin
+// Stroke is given in viewBox units. The header logo uses 2.2 - too thin
 // once the icon is scaled and rasterized, so we use a heavier weight here
 // so the M reads at favicon and home-screen sizes.
 const STROKE_VB = 4;

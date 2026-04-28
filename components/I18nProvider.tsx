@@ -18,7 +18,7 @@ export default function I18nProvider({ children }: { children: React.ReactNode }
       try {
         localStorage.setItem(LOCALE_STORAGE_KEY, lng);
       } catch {
-        // localStorage unavailable — locale won't persist this session
+        // localStorage unavailable - locale won't persist this session
       }
     };
     i18n.on('languageChanged', handler);
