@@ -1,146 +1,139 @@
-// app/capture/page.tsx
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { saveFragment } from '@/lib/storage';
+import type { Fragment } from '@/lib/types';
 
-const MAX_LENGTH = 2000;
+const MAX_CHARS = 2000;
+const COUNTER_RED_OVER = 1900;
+const SAVED_REDIRECT_MS = 1500;
 
-function getTimeOfDay(): string {
-  const h = new Date().getHours();
-  if (h >= 5  && h < 12) return 'Morning';
-  if (h >= 12 && h < 17) return 'Afternoon';
-  if (h >= 17 && h < 21) return 'Evening';
+function timeOfDay(hour: number): string {
+  if (hour >= 5  && hour <= 11) return 'Morning';
+  if (hour >= 12 && hour <= 17) return 'Afternoon';
+  if (hour >= 18 && hour <= 21) return 'Evening';
   return 'Night';
 }
 
-function formatContextDate(): string {
-  return new Date().toLocaleDateString([], {
-    weekday: 'long',
-    day:     'numeric',
-    month:   'long',
-    year:    'numeric',
+function formatDate(d: Date): string {
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
   });
 }
 
 export default function CapturePage() {
-  const router              = useRouter();
-  const [content, setContent]   = useState('');
-  const [saved,   setSaved]     = useState(false);
-  const [focused, setFocused]   = useState(false);
-  const textareaRef             = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [content, setContent] = useState('');
+  const [saved, setSaved] = useState(false);
+  const [contextNow, setContextNow] = useState<Date | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of wall-clock time on mount
+    setContextNow(new Date());
     textareaRef.current?.focus();
   }, []);
 
-  // Auto-resize textarea
-  useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = `${el.scrollHeight}px`;
-  }, [content]);
+  const canSave = content.trim().length > 0 && !saved;
+  const counterRed = content.length > COUNTER_RED_OVER;
+  const remaining = MAX_CHARS - content.length;
 
-  function handleSave() {
-    if (!content.trim() || saved) return;
-    const now = new Date().toISOString();
-    saveFragment({
-      id:        crypto.randomUUID(),
-      content:   content.trim(),
-      createdAt: now,
-      updatedAt: now,
-    });
+  const handleSave = () => {
+    if (!canSave) return;
+    const iso = new Date().toISOString();
+    const fragment: Fragment = {
+      id: crypto.randomUUID(),
+      content: content.trim(),
+      createdAt: iso,
+      updatedAt: iso,
+    };
+    saveFragment(fragment);
     setSaved(true);
-    setTimeout(() => router.push('/'), 1500);
-  }
-
-  const remaining  = MAX_LENGTH - content.length;
-  const counterRed = remaining < 100;
-  const canSave    = content.trim().length > 0 && !saved;
+    setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
+  };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 pt-12 pb-4 border-b border-mnemo-border">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-1.5 text-mnemo-ink-secondary"
-          aria-label="Go back"
+    <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-6 pb-12">
+      <header className="flex items-center justify-between mb-10">
+        <Link
+          href="/"
+          aria-label="Back"
+          className="flex items-center gap-2 text-mnemo-ink"
         >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <path d="M11 4L6 9l5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
           </svg>
-        </button>
-
-        <span className="font-dm-mono text-mnemo-ink-secondary text-[10px] uppercase tracking-widest">
-          New fragment
-        </span>
-
+          <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em]">
+            New fragment
+          </span>
+        </Link>
         <button
+          type="button"
           onClick={handleSave}
           disabled={!canSave}
-          className={`font-dm-mono text-[11px] uppercase tracking-wider transition-colors ${
-            canSave ? 'text-mnemo-ink' : 'text-mnemo-ink-tertiary'
+          className={`font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+            canSave
+              ? 'text-mnemo-ink'
+              : 'text-mnemo-ink-tertiary cursor-not-allowed'
           }`}
         >
           Save
         </button>
       </header>
 
-      {/* Content area */}
-      <main className="flex-1 flex flex-col px-4 pt-5">
-        {saved ? (
-          <div className="flex-1 flex items-center justify-center">
-            <p className="font-cormorant italic text-mnemo-ink-secondary text-lg text-center leading-relaxed">
-              Saved. It will return when the time is right.
-            </p>
+      {saved ? (
+        <p className="font-cormorant italic text-2xl text-mnemo-ink leading-relaxed mt-12">
+          Saved. It will return when the time is right.
+        </p>
+      ) : (
+        <>
+          <div className="border-b border-mnemo-border focus-within:border-mnemo-ink transition-colors mb-2">
+            <textarea
+              ref={textareaRef}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              maxLength={MAX_CHARS}
+              placeholder="What's on your mind?"
+              rows={6}
+              className="w-full bg-transparent border-0 outline-none resize-none font-cormorant italic text-[18px] leading-relaxed text-mnemo-ink placeholder:text-mnemo-ink-tertiary py-2 min-h-[160px]"
+            />
           </div>
-        ) : (
-          <>
-            {/* Textarea */}
-            <div
-              className="flex-1 relative pb-2"
-              style={{
-                borderBottom: `1px solid ${focused ? '#18160f' : '#ddd6c5'}`,
-                transition: 'border-color 0.2s ease',
-              }}
+          <div className="flex justify-end mb-8">
+            <span
+              className={`font-dm-mono text-[10px] tabular-nums ${
+                counterRed ? 'text-red-600' : 'text-mnemo-ink-tertiary'
+              }`}
+              aria-live="polite"
             >
-              <textarea
-                ref={textareaRef}
-                value={content}
-                onChange={e => setContent(e.target.value)}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                maxLength={MAX_LENGTH}
-                placeholder="What's on your mind?"
-                className="w-full bg-transparent border-none outline-none resize-none font-cormorant italic text-mnemo-ink leading-relaxed placeholder:text-mnemo-ink-tertiary"
-                style={{ fontSize: '18px', minHeight: '200px' }}
-              />
-              {/* Character count */}
-              <p
-                className={`font-dm-mono text-right mt-1 transition-colors ${
-                  counterRed ? 'text-red-500' : 'text-mnemo-ink-tertiary'
-                }`}
-                style={{ fontSize: '10px' }}
-              >
-                {content.length} / {MAX_LENGTH}
-              </p>
-            </div>
-
-            {/* Context pills */}
-            <div className="pt-3 pb-4 flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-mnemo-border bg-mnemo-surface font-dm-mono text-mnemo-ink-tertiary text-[10px]">
-                {formatContextDate()}
+              {remaining}
+            </span>
+          </div>
+          {contextNow && (
+            <div className="border-t border-mnemo-border pt-5 flex flex-wrap gap-2">
+              <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
+                {formatDate(contextNow)}
               </span>
-              <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-mnemo-border bg-mnemo-surface font-dm-mono text-mnemo-ink-tertiary text-[10px]">
-                {getTimeOfDay()}
+              <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
+                {timeOfDay(contextNow.getHours())}
               </span>
             </div>
-          </>
-        )}
-      </main>
-    </div>
+          )}
+        </>
+      )}
+    </main>
   );
 }

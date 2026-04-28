@@ -3,56 +3,59 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+const HouseIcon = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z" />
+  </svg>
+);
+
+const PlusCircleIcon = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 8v8M8 12h8" />
+  </svg>
+);
+
+const ListIcon = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+);
+
 const NAV_ITEMS = [
-  {
-    href:  '/',
-    label: 'Home',
-    icon:  (active: boolean) => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path
-          d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"
-          stroke="currentColor"
-          strokeWidth={active ? '1.5' : '1.2'}
-          strokeLinejoin="round"
-          fill={active ? 'currentColor' : 'none'}
-          fillOpacity={active ? 0.12 : 0}
-        />
-      </svg>
-    ),
-  },
-  {
-    href:  '/capture',
-    label: 'Capture',
-    icon:  (active: boolean) => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <circle
-          cx="10" cy="10" r="7"
-          stroke="currentColor"
-          strokeWidth={active ? '1.5' : '1.2'}
-          fill={active ? 'currentColor' : 'none'}
-          fillOpacity={active ? 0.12 : 0}
-        />
-        <path d="M10 7v6M7 10h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    href:  '/archive',
-    label: 'Archive',
-    icon:  (active: boolean) => (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <rect
-          x="2" y="4" width="16" height="13" rx="1.5"
-          stroke="currentColor"
-          strokeWidth={active ? '1.5' : '1.2'}
-          fill={active ? 'currentColor' : 'none'}
-          fillOpacity={active ? 0.12 : 0}
-        />
-        <path d="M2 7.5h16" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M6 11h8M6 13.5h5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-      </svg>
-    ),
-  },
+  { href: '/',        label: 'Home',    Icon: HouseIcon },
+  { href: '/capture', label: 'Capture', Icon: PlusCircleIcon },
+  { href: '/archive', label: 'Archive', Icon: ListIcon },
 ] as const;
 
 export default function BottomNav() {
@@ -60,22 +63,25 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 bg-mnemo-bg border-t border-mnemo-border"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      aria-label="Primary"
+      className="fixed bottom-0 inset-x-0 bg-mnemo-bg border-t border-mnemo-border z-30"
     >
-      <ul className="flex items-center justify-around h-14 max-w-md mx-auto px-4">
-        {NAV_ITEMS.map(({ href, label, icon }) => {
-          const active = pathname === href;
+      <ul className="max-w-3xl mx-auto flex">
+        {NAV_ITEMS.map(({ href, label, Icon }) => {
+          const isActive = pathname === href;
           return (
-            <li key={href}>
+            <li key={href} className="flex-1">
               <Link
                 href={href}
-                className={`flex flex-col items-center gap-0.5 px-4 py-1 transition-colors ${
-                  active ? 'text-mnemo-ink' : 'text-mnemo-ink-tertiary'
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex flex-col items-center justify-center gap-1 py-3 transition-colors ${
+                  isActive
+                    ? 'text-mnemo-ink'
+                    : 'text-mnemo-ink-tertiary hover:text-mnemo-ink-secondary'
                 }`}
               >
-                {icon(active)}
-                <span className="font-dm-mono text-[9px] uppercase tracking-wider">
+                <Icon />
+                <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em]">
                   {label}
                 </span>
               </Link>

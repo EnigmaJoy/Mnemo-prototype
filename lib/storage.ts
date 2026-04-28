@@ -3,6 +3,7 @@ import type { Fragment, Resurface } from './types';
 
 const FRAGMENTS_KEY   = 'mnemo_fragments';
 const RESURFACING_KEY = 'mnemo_resurfacing';
+const DISMISSED_KEY   = 'mnemo_dismissed';
 
 export function isStorageAvailable(): boolean {
   try {
@@ -74,4 +75,27 @@ export function updateResurfacing(
   if (idx < 0) return;
   all[idx] = { ...all[idx], reaction };
   writeJSON(RESURFACING_KEY, all);
+}
+
+// sessionStorage — "Not now" dismissals, cleared on browser close
+export function getDismissedIds(): string[] {
+  try {
+    const raw = sessionStorage.getItem(DISMISSED_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addDismissedId(id: string): void {
+  try {
+    const all = getDismissedIds();
+    if (all.includes(id)) return;
+    all.push(id);
+    sessionStorage.setItem(DISMISSED_KEY, JSON.stringify(all));
+  } catch {
+    // sessionStorage unavailable — banner still hides via component state for this page
+  }
 }

@@ -1,5 +1,5 @@
 // __tests__/lib/resurfacing.test.ts
-import { getResurfacingCandidate, getTriggerLabel, daysSince } from '@/lib/resurfacing';
+import { selectResurfacingCandidate, daysSince } from '@/lib/resurfacing';
 import type { Fragment, Resurface } from '@/lib/types';
 
 // Helper to build a fragment created N days ago
@@ -27,80 +27,68 @@ describe('daysSince', () => {
   });
 });
 
-describe('getTriggerLabel', () => {
-  it('returns "7 days ago" for day_7', () => {
-    expect(getTriggerLabel('day_7')).toBe('7 days ago');
-  });
-  it('returns "14 days ago" for day_14', () => {
-    expect(getTriggerLabel('day_14')).toBe('14 days ago');
-  });
-  it('returns "30 days ago" for day_30', () => {
-    expect(getTriggerLabel('day_30')).toBe('30 days ago');
-  });
-});
-
-describe('getResurfacingCandidate', () => {
+describe('selectResurfacingCandidate', () => {
   const noHistory: Resurface[] = [];
   const noDismissed: string[] = [];
 
   it('returns null when no fragments exist', () => {
-    expect(getResurfacingCandidate([], noHistory, noDismissed)).toBeNull();
+    expect(selectResurfacingCandidate([], noHistory, noDismissed)).toBeNull();
   });
 
   it('returns null for a fragment from 5 days ago (too early)', () => {
-    expect(getResurfacingCandidate([fragmentDaysAgo(5)], noHistory, noDismissed)).toBeNull();
+    expect(selectResurfacingCandidate([fragmentDaysAgo(5)], noHistory, noDismissed)).toBeNull();
   });
 
   it('returns null for a fragment from 9 days ago (out of day_7 window)', () => {
-    expect(getResurfacingCandidate([fragmentDaysAgo(9)], noHistory, noDismissed)).toBeNull();
+    expect(selectResurfacingCandidate([fragmentDaysAgo(9)], noHistory, noDismissed)).toBeNull();
   });
 
   it('triggers day_7 for a fragment from exactly 7 days ago', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(7)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(7)], noHistory, noDismissed);
     expect(result).not.toBeNull();
     expect(result!.triggerType).toBe('day_7');
   });
 
   it('triggers day_7 for a fragment from 6 days ago (lower bound)', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(6)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(6)], noHistory, noDismissed);
     expect(result).not.toBeNull();
     expect(result!.triggerType).toBe('day_7');
   });
 
   it('triggers day_7 for a fragment from 8 days ago (upper bound)', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(8)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(8)], noHistory, noDismissed);
     expect(result).not.toBeNull();
     expect(result!.triggerType).toBe('day_7');
   });
 
   it('triggers day_14 for a fragment from 14 days ago', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(14)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(14)], noHistory, noDismissed);
     expect(result).not.toBeNull();
     expect(result!.triggerType).toBe('day_14');
   });
 
   it('triggers day_14 for a fragment from 13 days ago (lower bound)', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(13)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(13)], noHistory, noDismissed);
     expect(result!.triggerType).toBe('day_14');
   });
 
   it('triggers day_14 for a fragment from 15 days ago (upper bound)', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(15)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(15)], noHistory, noDismissed);
     expect(result!.triggerType).toBe('day_14');
   });
 
   it('triggers day_30 for a fragment from 30 days ago', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(30)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(30)], noHistory, noDismissed);
     expect(result!.triggerType).toBe('day_30');
   });
 
   it('triggers day_30 for a fragment from 29 days ago (lower bound)', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(29)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(29)], noHistory, noDismissed);
     expect(result!.triggerType).toBe('day_30');
   });
 
   it('triggers day_30 for a fragment from 31 days ago (upper bound)', () => {
-    const result = getResurfacingCandidate([fragmentDaysAgo(31)], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([fragmentDaysAgo(31)], noHistory, noDismissed);
     expect(result!.triggerType).toBe('day_30');
   });
 
@@ -112,18 +100,18 @@ describe('getResurfacingCandidate', () => {
       reaction: 'still_true',
       triggerType: 'day_7',
     }];
-    expect(getResurfacingCandidate([fragment], history, noDismissed)).toBeNull();
+    expect(selectResurfacingCandidate([fragment], history, noDismissed)).toBeNull();
   });
 
   it('excludes fragments in the dismissed list', () => {
     const fragment = fragmentDaysAgo(7);
-    expect(getResurfacingCandidate([fragment], noHistory, [fragment.id])).toBeNull();
+    expect(selectResurfacingCandidate([fragment], noHistory, [fragment.id])).toBeNull();
   });
 
   it('selects the most recent fragment when multiple are eligible', () => {
     const older  = fragmentDaysAgo(8,  'older');
     const newer  = fragmentDaysAgo(6,  'newer');
-    const result = getResurfacingCandidate([older, newer], noHistory, noDismissed);
+    const result = selectResurfacingCandidate([older, newer], noHistory, noDismissed);
     expect(result!.fragment.id).toBe('newer');
   });
 
@@ -135,6 +123,6 @@ describe('getResurfacingCandidate', () => {
       reaction: 'archived',
       triggerType: 'day_7',
     }];
-    expect(getResurfacingCandidate([fragment], history, noDismissed)).toBeNull();
+    expect(selectResurfacingCandidate([fragment], history, noDismissed)).toBeNull();
   });
 });

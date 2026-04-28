@@ -1,62 +1,57 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import type { Fragment, Resurface } from '@/lib/types';
-import { getTriggerLabel } from '@/lib/resurfacing';
+import { addDismissedId } from '@/lib/storage';
 
-interface ResurfaceBannerProps {
-  fragment:    Fragment;
+interface Props {
+  fragment: Fragment;
   triggerType: Resurface['triggerType'];
-  onDismiss:   () => void;
+  onDismiss: () => void;
 }
 
-function getPreview(content: string): string {
-  const lines = content.split('\n');
-  const first2 = lines.slice(0, 2).join('\n');
-  if (first2.length > 120) return first2.slice(0, 120) + '…';
-  return first2;
+const TRIGGER_LABELS: Record<Resurface['triggerType'], string> = {
+  day_7:  '7 days ago',
+  day_14: '14 days ago',
+  day_30: '30 days ago',
+};
+
+function firstNLines(content: string, n: number): string {
+  return content.split('\n').slice(0, n).join('\n');
 }
 
-export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: ResurfaceBannerProps) {
-  const router = useRouter();
-  // Label is derived from triggerType only — never from the raw daysSince value
-  const label  = getTriggerLabel(triggerType);
+export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: Props) {
+  const handleDismiss = () => {
+    addDismissedId(fragment.id);
+    onDismiss();
+  };
 
   return (
     <div
-      className="bg-mnemo-dark rounded-xl p-4 mb-4 animate-slide-fade-in"
       role="region"
-      aria-label="Resurfacing moment"
+      aria-label="A previous fragment is resurfacing"
+      className="bg-mnemo-dark rounded-xl p-5 animate-slide-fade-in"
     >
-      {/* Trigger label — canonical, from triggerType */}
-      <p className="font-dm-mono text-mnemo-gold text-[10px] uppercase tracking-widest mb-2">
-        {label}
-      </p>
-
-      {/* Fragment preview */}
+      <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-gold mb-3">
+        {TRIGGER_LABELS[triggerType]}
+      </div>
       <p
-        className="font-cormorant italic leading-relaxed mb-4 line-clamp-2"
-        style={{ color: 'rgba(245,241,234,0.88)', fontSize: '17px' }}
+        className="font-cormorant italic text-base leading-relaxed mb-5 whitespace-pre-wrap"
+        style={{ color: 'rgba(245, 241, 234, 0.88)' }}
       >
-        {getPreview(fragment.content)}
+        {firstNLines(fragment.content, 2)}
       </p>
-
-      {/* Actions */}
       <div className="flex items-center justify-between">
-        <button
-          onClick={() => router.push(`/resurface/${fragment.id}`)}
-          className="font-dm-mono text-mnemo-gold text-[11px] uppercase tracking-wider flex items-center gap-1 hover:opacity-80 transition-opacity"
+        <Link
+          href={`/resurface/${fragment.id}`}
+          className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-gold"
         >
-          Read
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-
+          Read →
+        </Link>
         <button
-          onClick={onDismiss}
-          className="font-dm-mono text-[10px] uppercase tracking-wider transition-opacity"
-          style={{ color: 'rgba(245,241,234,0.28)' }}
+          type="button"
+          onClick={handleDismiss}
+          className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-ink-tertiary"
         >
           Not now
         </button>

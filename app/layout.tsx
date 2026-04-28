@@ -1,63 +1,70 @@
-// app/layout.tsx
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from 'next/font/google';
 import './globals.css';
-import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 
 const cormorant = Cormorant_Garamond({
-  weight:   ['300', '400'],
-  style:    ['normal', 'italic'],
-  subsets:  ['latin'],
   variable: '--font-cormorant',
-  display:  'swap',
+  weight: ['300', '400'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 const dmSans = DM_Sans({
-  weight:   ['300', '400', '500'],
-  subsets:  ['latin'],
   variable: '--font-dm-sans',
-  display:  'swap',
+  weight: ['300', '400', '500'],
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 const dmMono = DM_Mono({
-  weight:   ['300', '400'],
-  subsets:  ['latin'],
   variable: '--font-dm-mono',
-  display:  'swap',
+  weight: ['300', '400'],
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title:       'Mnemo',
-  description: 'A personal memory app that resurfaces your thoughts at the right moment.',
-  manifest:    '/manifest.json',
+  title: 'Mnemo',
+  description: 'Capture a thought. It returns when the time is right.',
+  manifest: '/manifest.json',
   appleWebApp: {
-    capable:        true,
-    statusBarStyle: 'black-translucent',
-    title:          'Mnemo',
+    capable: true,
+    title: 'Mnemo',
   },
   icons: {
-    icon:  '/icons/icon-192.png',
+    icon: [
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
     apple: '/icons/icon-192.png',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor:   '#18160f',
-  width:        'device-width',
+  themeColor: '#18160f',
+  width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable}`}
+      className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} h-full antialiased`}
     >
-      <body className="min-h-screen bg-mnemo-bg">
-        <ServiceWorkerRegistrar />
+      <body className="min-h-full flex flex-col bg-mnemo-bg text-mnemo-ink font-dm-sans">
         {children}
+        <Script id="mnemo-sw-register" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js').catch(function () {});
+              });
+            }
+          `}
+        </Script>
       </body>
     </html>
   );

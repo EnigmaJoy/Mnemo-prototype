@@ -2,80 +2,67 @@
 
 import { useState } from 'react';
 import type { Resurface } from '@/lib/types';
+import { updateResurfacing } from '@/lib/storage';
 
-interface ReactionButtonsProps {
-  initial?:   Resurface['reaction'];
-  onReact:    (reaction: Exclude<Resurface['reaction'], null>) => void;
+type Reaction = NonNullable<Resurface['reaction']>;
+
+interface Props {
+  fragmentId: string;
+  initialReaction: Resurface['reaction'];
 }
 
-type ReactionChoice = Exclude<Resurface['reaction'], null>;
-
-const REACTIONS: { value: ReactionChoice; label: string; confirmation: string }[] = [
-  {
-    value:        'still_true',
-    label:        'Still true',
-    confirmation: 'It still holds.',
-  },
-  {
-    value:        'changed',
-    label:        'Everything changed',
-    confirmation: 'Noted. Things change.',
-  },
-  {
-    value:        'archived',
-    label:        'Archive',
-    confirmation: "Archived. It won't surface again.",
-  },
+const OPTIONS: ReadonlyArray<{ value: Reaction; label: string }> = [
+  { value: 'still_true', label: 'Still true' },
+  { value: 'changed',    label: 'Everything changed' },
+  { value: 'archived',   label: 'Archive' },
 ];
 
-export default function ReactionButtons({ initial = null, onReact }: ReactionButtonsProps) {
-  const [selected, setSelected] = useState<ReactionChoice | null>(
-    initial as ReactionChoice | null
-  );
+export default function ReactionButtons({ fragmentId, initialReaction }: Props) {
+  const [selected, setSelected] = useState<Resurface['reaction']>(initialReaction);
+  const locked = selected !== null;
 
-  function handleSelect(value: ReactionChoice) {
-    if (selected) return; // already reacted
-    setSelected(value);
-    onReact(value);
-  }
+  const handleSelect = (reaction: Reaction) => {
+    if (locked) return;
+    setSelected(reaction);
+    updateResurfacing(fragmentId, reaction);
+  };
 
   return (
-    <div>
-      <p className="font-dm-mono text-mnemo-ink-tertiary text-[9px] uppercase tracking-widest mb-3">
+    <section>
+      <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-4">
         How does it feel today?
       </p>
-      <div className="flex flex-col gap-2" style={{ pointerEvents: selected ? 'none' : 'auto' }}>
-        {REACTIONS.map(({ value, label, confirmation }) => {
+      <div className={`flex flex-col gap-3 ${locked ? 'pointer-events-none' : ''}`}>
+        {OPTIONS.map(({ value, label }) => {
           const isSelected = selected === value;
-          const isArchived = value === 'archived' && isSelected;
 
-          let borderColor = '#ddd6c5'; // default border
-          if (isSelected && value === 'still_true') borderColor = '#18160f';
-          if (isSelected && value === 'changed')    borderColor = '#c4a35a';
-          // archived keeps default border, just reduces opacity
+          let stateClass = 'border-mnemo-border text-mnemo-ink';
+          if (isSelected && value === 'still_true') {
+            stateClass = 'border-mnemo-ink text-mnemo-ink';
+          } else if (isSelected && value === 'changed') {
+            stateClass = 'border-mnemo-gold text-mnemo-ink';
+          } else if (isSelected && value === 'archived') {
+            stateClass = 'border-mnemo-border text-mnemo-ink opacity-50';
+          }
 
           return (
-            <div key={value}>
-              <button
-                onClick={() => handleSelect(value)}
-                className="w-full text-left px-4 py-3 rounded-lg border font-dm-sans text-sm transition-all"
-                style={{
-                  borderColor,
-                  opacity: isArchived ? 0.45 : 1,
-                  color:   isSelected ? '#18160f' : '#7a7568',
-                }}
-              >
-                {label}
-              </button>
-              {isSelected && (
-                <p className="font-dm-mono text-mnemo-ink-tertiary mt-1.5 ml-1" style={{ fontSize: '10px' }}>
-                  {confirmation}
-                </p>
-              )}
-            </div>
+            <button
+              key={value}
+              type="button"
+              aria-pressed={isSelected}
+              onClick={() => handleSelect(value)}
+              className={`w-full px-5 py-3 border bg-transparent font-dm-sans text-sm transition-colors ${stateClass}`}
+            >
+              {label}
+            </button>
           );
         })}
       </div>
-    </div>
+      {selected === 'archived' && (
+        <p className="font-dm-sans text-sm text-mnemo-ink-secondary mt-4">
+          {"Archived. It won't surface again."}
+        </p>
+      )}
+    </section>
   );
 }

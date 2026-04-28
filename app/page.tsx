@@ -1,95 +1,90 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import BottomNav from '@/components/BottomNav';
 import FragmentItem from '@/components/FragmentItem';
 import ResurfaceBanner from '@/components/ResurfaceBanner';
-import { getFragments, getResurfacingHistory, isStorageAvailable } from '@/lib/storage';
-import { getResurfacingCandidate } from '@/lib/resurfacing';
+import {
+  getFragments,
+  getResurfacingHistory,
+  getDismissedIds,
+  isStorageAvailable,
+} from '@/lib/storage';
+import { selectResurfacingCandidate } from '@/lib/resurfacing';
 import type { Fragment, ResurfacingCandidate } from '@/lib/types';
 
-const DISMISSED_KEY = 'mnemo_dismissed';
-
-function getSessionDismissed(): string[] {
-  try {
-    const raw = sessionStorage.getItem(DISMISSED_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function addSessionDismissed(id: string): void {
-  try {
-    const current = getSessionDismissed();
-    sessionStorage.setItem(DISMISSED_KEY, JSON.stringify([...current, id]));
-  } catch { /* noop */ }
-}
+const RECENT_COUNT = 5;
 
 export default function HomePage() {
-  const [fragments,  setFragments]  = useState<Fragment[]>([]);
-  const [candidate,  setCandidate]  = useState<ResurfacingCandidate | null>(null);
-  const [storageOk,  setStorageOk]  = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+  const [recent, setRecent] = useState<Fragment[]>([]);
+  const [candidate, setCandidate] = useState<ResurfacingCandidate | null>(null);
+  const [storageOk, setStorageOk] = useState(true);
 
   useEffect(() => {
-    setStorageOk(isStorageAvailable());
-    const all       = getFragments();
-    const history   = getResurfacingHistory();
-    const dismissed = getSessionDismissed();
+    /* eslint-disable react-hooks/set-state-in-effect --
+       One-time read from localStorage on mount; useSyncExternalStore would be
+       overkill since we don't need to react to external storage changes. */
+    const ok = isStorageAvailable();
+    setStorageOk(ok);
 
-    setFragments(all.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)));
-    setCandidate(getResurfacingCandidate(all, history, dismissed));
+    const all = getFragments();
+    const sorted = [...all].sort(
+      (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)
+    );
+    setRecent(sorted.slice(0, RECENT_COUNT));
+
+    const cand = selectResurfacingCandidate(
+      all,
+      getResurfacingHistory(),
+      getDismissedIds()
+    );
+    setCandidate(cand);
+
+    setHydrated(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  function handleDismiss() {
-    if (!candidate) return;
-    addSessionDismissed(candidate.fragment.id);
-    setCandidate(null);
-  }
-
-  const recent = fragments.slice(0, 5);
-
   return (
-    <div className="min-h-screen pb-20">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 pt-12 pb-4">
-        <Logo />
-      </header>
+    <>
+      <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
+        <header className="flex items-center gap-3 mb-10">
+          <Logo />
+          <span className="font-cormorant font-light uppercase tracking-[0.18em] text-sm">
+            mnemo
+          </span>
+        </header>
 
-      <main className="px-4">
-        {/* Storage warning */}
-        {!storageOk && (
-          <div className="mb-4 px-3 py-2.5 rounded-lg border border-mnemo-border bg-mnemo-surface">
-            <p className="font-dm-sans text-mnemo-ink-secondary leading-relaxed" style={{ fontSize: '12px' }}>
-              Mnemo works best when storage is available. Some browsers block this in private mode.
-            </p>
+        {hydrated && !storageOk && (
+          <div className="bg-mnemo-surface border border-mnemo-border rounded-lg p-4 mb-6 text-sm font-dm-sans text-mnemo-ink-secondary">
+            Mnemo works best when storage is available. Some browsers block this in private mode.
           </div>
         )}
 
-        {/* Resurfacing banner */}
-        {candidate && (
-          <ResurfaceBanner
-            fragment={candidate.fragment}
-            triggerType={candidate.triggerType}
-            onDismiss={handleDismiss}
-          />
+        {hydrated && candidate && (
+          <div className="mb-8">
+            <ResurfaceBanner
+              fragment={candidate.fragment}
+              triggerType={candidate.triggerType}
+              onDismiss={() => setCandidate(null)}
+            />
+          </div>
         )}
 
-        {/* Recent fragments */}
-        {recent.length === 0 ? (
-          <div className="pt-8 pb-4">
-            <p className="font-cormorant italic text-mnemo-ink-secondary leading-relaxed" style={{ fontSize: '16px' }}>
-              Nothing here yet. Start with one thought — anything you&apos;d want to find a year from now.
-            </p>
-          </div>
-        ) : (
-          <div>
-            {recent.map(f => (
-              <FragmentItem key={f.id} fragment={f} lines={2} />
+        {hydrated && recent.length === 0 && (
+          <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
+            {"Nothing here yet. Start with one thought — anything you'd want to find a year from now."}
+          </p>
+        )}
+
+        {hydrated && recent.length > 0 && (
+          <section>
+            {recent.map((f) => (
+              <FragmentItem key={f.id} fragment={f} />
             ))}
-          </div>
+          </section>
         )}
       </main>
 
@@ -106,6 +101,6 @@ export default function HomePage() {
       </Link>
 
       <BottomNav />
-    </div>
+    </>
   );
 }

@@ -1,161 +1,118 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import BottomNav from '@/components/BottomNav';
+import FragmentItem from '@/components/FragmentItem';
 import { getFragments, deleteFragment } from '@/lib/storage';
 import type { Fragment } from '@/lib/types';
 
-function groupByMonth(fragments: Fragment[]): { label: string; items: Fragment[] }[] {
-  const groups = new Map<string, Fragment[]>();
-  for (const f of fragments) {
-    const label = new Date(f.createdAt).toLocaleDateString([], {
-      month: 'long',
-      year:  'numeric',
-    });
-    if (!groups.has(label)) groups.set(label, []);
-    groups.get(label)!.push(f);
-  }
-  return Array.from(groups.entries()).map(([label, items]) => ({ label, items }));
+function formatMonth(d: Date): string {
+  return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
 }
 
-function formatArchiveDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleDateString([], {
-    day:   'numeric',
-    month: 'short',
-    year:  'numeric',
-  });
+function todayYMD(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 export default function ArchivePage() {
-  const [fragments,  setFragments]  = useState<Fragment[]>([]);
-  const [expanded,   setExpanded]   = useState<Set<string>>(new Set());
-  const [confirming, setConfirming] = useState<string | null>(null);
-  const longPressRef                = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+  const [fragments, setFragments] = useState<Fragment[]>([]);
 
-  useEffect(() => {
-    const all = getFragments().sort(
+  const reload = () => {
+    const all = getFragments();
+    const sorted = [...all].sort(
       (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)
     );
-    setFragments(all);
+    setFragments(sorted);
+  };
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect --
+       One-time read from localStorage on mount. */
+    reload();
+    setHydrated(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  function toggleExpand(id: string) {
-    setExpanded(prev => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  }
-
-  function startLongPress(id: string) {
-    longPressRef.current = setTimeout(() => setConfirming(id), 600);
-  }
-
-  function cancelLongPress() {
-    if (longPressRef.current) clearTimeout(longPressRef.current);
-  }
-
-  function handleDelete(id: string) {
+  const handleDelete = (id: string) => {
     deleteFragment(id);
-    setFragments(prev => prev.filter(f => f.id !== id));
-    setConfirming(null);
-  }
+    reload();
+  };
 
-  function handleExport() {
-    const blob = new Blob([JSON.stringify(fragments, null, 2)], { type: 'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `mnemo-export-${new Date().toISOString().slice(0, 10)}.json`;
+  const handleExport = () => {
+    const data = JSON.stringify(getFragments(), null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mnemo-export-${todayYMD()}.json`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }
+  };
 
-  const groups = groupByMonth(fragments);
+  // Group by year-month, preserving Map insertion order (already reverse-chrono)
+  const groups = new Map<string, { label: string; items: Fragment[] }>();
+  for (const f of fragments) {
+    const d = new Date(f.createdAt);
+    const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+    if (!groups.has(key)) {
+      groups.set(key, { label: formatMonth(d), items: [] });
+    }
+    groups.get(key)!.items.push(f);
+  }
 
   return (
-    <div className="min-h-screen pb-20">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 pt-12 pb-4 border-b border-mnemo-border">
-        <span className="font-dm-mono text-mnemo-ink-secondary text-[10px] uppercase tracking-widest">
-          Archive
-        </span>
-        {fragments.length > 0 && (
-          <button
-            onClick={handleExport}
-            className="font-dm-mono text-mnemo-ink-secondary text-[10px] uppercase tracking-wider hover:text-mnemo-ink transition-colors"
-          >
-            Export
-          </button>
-        )}
-      </header>
+    <>
+      <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
+        <header className="flex items-center justify-between mb-10">
+          <h1 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink">
+            Archive
+          </h1>
+          {fragments.length > 0 && (
+            <button
+              type="button"
+              onClick={handleExport}
+              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink"
+            >
+              Export
+            </button>
+          )}
+        </header>
 
-      <main className="px-4">
-        {fragments.length === 0 ? (
-          <div className="pt-8">
-            <p className="font-cormorant italic text-mnemo-ink-secondary leading-relaxed" style={{ fontSize: '16px' }}>
-              Your archive is empty. Every fragment you save will live here.
-            </p>
-          </div>
-        ) : (
-          groups.map(({ label, items }) => (
-            <section key={label} className="mt-6">
-              <h2 className="font-dm-mono text-mnemo-ink-tertiary text-[10px] uppercase tracking-widest mb-3">
-                {label}
-              </h2>
-              {items.map(f => (
-                <div key={f.id} className="border-b border-mnemo-border py-3">
-                  {confirming === f.id ? (
-                    <div className="py-1">
-                      <p className="font-dm-sans text-mnemo-ink-secondary leading-relaxed mb-3" style={{ fontSize: '14px' }}>
-                        Remove this fragment? This cannot be undone.
-                      </p>
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => handleDelete(f.id)}
-                          className="font-dm-mono text-[11px] uppercase tracking-wider text-red-500"
-                        >
-                          Remove
-                        </button>
-                        <button
-                          onClick={() => setConfirming(null)}
-                          className="font-dm-mono text-[11px] uppercase tracking-wider text-mnemo-ink-tertiary"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => toggleExpand(f.id)}
-                      onMouseDown={() => startLongPress(f.id)}
-                      onMouseUp={cancelLongPress}
-                      onMouseLeave={cancelLongPress}
-                      onTouchStart={() => startLongPress(f.id)}
-                      onTouchEnd={cancelLongPress}
-                      className="cursor-pointer select-none"
-                    >
-                      <p className="font-dm-mono text-mnemo-ink-tertiary mb-1.5" style={{ fontSize: '10px' }}>
-                        {formatArchiveDate(f.createdAt)}
-                      </p>
-                      <p
-                        className={`font-cormorant italic text-mnemo-ink leading-relaxed ${
-                          expanded.has(f.id) ? '' : 'line-clamp-3'
-                        }`}
-                        style={{ fontSize: '16px' }}
-                      >
-                        {f.content}
-                      </p>
-                    </div>
-                  )}
+        {hydrated && fragments.length === 0 && (
+          <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
+            Your archive is empty. Every fragment you save will live here.
+          </p>
+        )}
+
+        {hydrated && fragments.length > 0 && (
+          <div>
+            {Array.from(groups.entries()).map(([key, { label, items }]) => (
+              <section key={key} className="mb-10">
+                <h2 className="font-dm-mono text-[11px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-2">
+                  {label}
+                </h2>
+                <div>
+                  {items.map((f) => (
+                    <FragmentItem
+                      key={f.id}
+                      fragment={f}
+                      onDelete={handleDelete}
+                    />
+                  ))}
                 </div>
-              ))}
-            </section>
-          ))
+              </section>
+            ))}
+          </div>
         )}
       </main>
-
       <BottomNav />
-    </div>
+    </>
   );
 }

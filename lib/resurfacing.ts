@@ -1,62 +1,62 @@
 // lib/resurfacing.ts
 import type { Fragment, Resurface, ResurfacingCandidate } from './types';
 
-export function daysSince(isoDate: string): number {
-  const created = Date.parse(isoDate);
-  const now     = Date.now();
-  return Math.floor((now - created) / 86_400_000);
-}
+const MS_PER_DAY = 86_400_000;
 
-type TriggerWindow = { min: number; max: number; type: Resurface['triggerType'] };
-
-const TRIGGER_WINDOWS: TriggerWindow[] = [
-  { min: 6,  max: 8,  type: 'day_7'  },
-  { min: 13, max: 15, type: 'day_14' },
-  { min: 29, max: 31, type: 'day_30' },
+const TRIGGER_WINDOWS: ReadonlyArray<{
+  type: Resurface['triggerType'];
+  min: number;
+  max: number;
+}> = [
+  { type: 'day_7',  min: 6,  max: 8  },
+  { type: 'day_14', min: 13, max: 15 },
+  { type: 'day_30', min: 29, max: 31 },
 ];
 
-function getTriggerTypeForFragment(
-  fragment: Fragment
-): Resurface['triggerType'] | null {
-  const d = daysSince(fragment.createdAt);
-  for (const window of TRIGGER_WINDOWS) {
-    if (d >= window.min && d <= window.max) return window.type;
+export function daysSince(createdAt: string, now: Date = new Date()): number {
+  return Math.floor((now.getTime() - Date.parse(createdAt)) / MS_PER_DAY);
+}
+
+export function getTriggerType(days: number): Resurface['triggerType'] | null {
+  for (const w of TRIGGER_WINDOWS) {
+    if (days >= w.min && days <= w.max) return w.type;
   }
   return null;
 }
 
-export function getTriggerLabel(triggerType: Resurface['triggerType']): string {
-  const labels: Record<Resurface['triggerType'], string> = {
-    day_7:  '7 days ago',
-    day_14: '14 days ago',
-    day_30: '30 days ago',
-  };
-  return labels[triggerType];
-}
-
-export function getResurfacingCandidate(
+/**
+ * Selects at most one fragment to resurface. Pure — caller supplies inputs.
+ * Excludes fragments already reacted to (any non-null reaction) and any
+ * dismissed via "Not now" this session. Among the rest, picks the most
+ * recently created.
+ */
+export function selectResurfacingCandidate(
   fragments: Fragment[],
   history: Resurface[],
-  dismissedIds: string[]
+  dismissedIds: string[],
+  now: Date = new Date()
 ): ResurfacingCandidate | null {
-  const reactedIds   = new Set(history.filter(r => r.reaction !== null).map(r => r.fragmentId));
+  const reactedIds = new Set(
+    history.filter(r => r.reaction !== null).map(r => r.fragmentId)
+  );
   const dismissedSet = new Set(dismissedIds);
 
-  const candidates: ResurfacingCandidate[] = [];
+  let best: ResurfacingCandidate | null = null;
+  let bestCreatedMs = -Infinity;
 
   for (const fragment of fragments) {
-    if (reactedIds.has(fragment.id))   continue;
+    if (reactedIds.has(fragment.id)) continue;
     if (dismissedSet.has(fragment.id)) continue;
-    const triggerType = getTriggerTypeForFragment(fragment);
-    if (!triggerType) continue;
-    candidates.push({ fragment, triggerType });
+
+    const trigger = getTriggerType(daysSince(fragment.createdAt, now));
+    if (!trigger) continue;
+
+    const createdMs = Date.parse(fragment.createdAt);
+    if (createdMs > bestCreatedMs) {
+      best = { fragment, triggerType: trigger };
+      bestCreatedMs = createdMs;
+    }
   }
 
-  if (candidates.length === 0) return null;
-
-  // Most recently created wins
-  candidates.sort(
-    (a, b) => Date.parse(b.fragment.createdAt) - Date.parse(a.fragment.createdAt)
-  );
-  return candidates[0];
+  return best;
 }
