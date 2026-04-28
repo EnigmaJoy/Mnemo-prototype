@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Resurface } from '@/lib/types';
 import { updateResurfacing } from '@/lib/storage';
 
@@ -11,13 +12,14 @@ interface Props {
   initialReaction: Resurface['reaction'];
 }
 
-const OPTIONS: ReadonlyArray<{ value: Reaction; label: string }> = [
-  { value: 'still_true', label: 'Still true' },
-  { value: 'changed',    label: 'Everything changed' },
-  { value: 'archived',   label: 'Archive' },
+const OPTIONS: ReadonlyArray<{ value: Reaction; labelKey: string }> = [
+  { value: 'still_true', labelKey: 'reactions.stillTrue' },
+  { value: 'changed',    labelKey: 'reactions.changed' },
+  { value: 'archived',   labelKey: 'reactions.archive' },
 ];
 
 export default function ReactionButtons({ fragmentId, initialReaction }: Props) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<Resurface['reaction']>(initialReaction);
   const locked = selected !== null;
 
@@ -30,10 +32,10 @@ export default function ReactionButtons({ fragmentId, initialReaction }: Props) 
   return (
     <section>
       <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-4">
-        How does it feel today?
+        {t('reactions.prompt')}
       </p>
       <div className={`flex flex-col gap-3 ${locked ? 'pointer-events-none' : ''}`}>
-        {OPTIONS.map(({ value, label }) => {
+        {OPTIONS.map(({ value, labelKey }) => {
           const isSelected = selected === value;
 
           let stateClass = 'border-mnemo-border text-mnemo-ink';
@@ -53,14 +55,14 @@ export default function ReactionButtons({ fragmentId, initialReaction }: Props) 
               onClick={() => handleSelect(value)}
               className={`w-full px-5 py-3 border bg-transparent font-dm-sans text-sm transition-colors ${stateClass}`}
             >
-              {label}
+              {t(labelKey)}
             </button>
           );
         })}
       </div>
       {selected === 'archived' && (
         <p className="font-dm-sans text-sm text-mnemo-ink-secondary mt-4">
-          {"Archived. It won't surface again."}
+          {t('reactions.archivedNote')}
         </p>
       )}
     </section>

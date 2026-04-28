@@ -1,0 +1,59 @@
+{
+  "common": {
+    "back": "Retour",
+    "cancel": "Annuler",
+    "remove": "Supprimer",
+    "save": "Enregistrer",
+    "export": "Exporter"
+  },
+  "nav": {
+    "primary": "Navigation principale",
+    "home": "Accueil",
+    "capture": "Écrire",
+    "archive": "Archive",
+    "profile": "Profil"
+  },
+  "home": {
+    "storageUnavailable": "Mnemo fonctionne mieux lorsque le stockage est disponible. Certains navigateurs le bloquent en mode privé.",
+    "empty": "Rien ici pour l'instant. Commence par une pensée — quelque chose que tu voudrais retrouver dans un an.",
+    "newFragmentAria": "Nouveau fragment"
+  },
+  "capture": {
+    "title": "Nouveau fragment",
+    "placeholder": "À quoi penses-tu ?",
+    "saved": "Enregistré. Il reviendra quand le moment sera venu.",
+    "morning": "Matin",
+    "afternoon": "Après-midi",
+    "evening": "Soir",
+    "night": "Nuit"
+  },
+  "archive": {
+    "title": "Archive",
+    "empty": "Ton archive est vide. Chaque fragment que tu enregistres vivra ici."
+  },
+  "resurface": {
+    "missing": "Ce fragment n'est plus là.",
+    "explanation_one": "Ce fragment a refait surface parce que tu l'as écrit il y a {{count}} jour.",
+    "explanation_other": "Ce fragment a refait surface parce que tu l'as écrit il y a {{count}} jours.",
+    "notDueYet": "Ce fragment n'est pas encore prêt à refaire surface.",
+    "seeInArchive": "Voir dans l'archive →",
+    "bannerAria": "Un fragment précédent refait surface",
+    "notNow": "Pas maintenant",
+    "read": "Lire →"
+  },
+  "fragmentItem": {
+    "removeConfirm": "Supprimer ce fragment ? Cette action est irréversible."
+  },
+  "reactions": {
+    "prompt": "Comment cela te paraît aujourd'hui ?",
+    "stillTrue": "Toujours vrai",
+    "changed": "Tout a changé",
+    "archive": "Archiver",
+    "archivedNote": "Archivé. Il ne refera plus surface."
+  },
+  "profile": {
+    "title": "Profil",
+    "settings": "Paramètres",
+    "language": "Langue"
+  }
+}

@@ -1,14 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
 import FragmentItem from '@/components/FragmentItem';
 import { getFragments, deleteFragment } from '@/lib/storage';
+import { formatMonthYear } from '@/lib/datetime';
 import type { Fragment } from '@/lib/types';
-
-function formatMonth(d: Date): string {
-  return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
-}
 
 function todayYMD(): string {
   const d = new Date();
@@ -19,6 +17,7 @@ function todayYMD(): string {
 }
 
 export default function ArchivePage() {
+  const { t, i18n } = useTranslation();
   const [hydrated, setHydrated] = useState(false);
   const [fragments, setFragments] = useState<Fragment[]>([]);
 
@@ -62,7 +61,7 @@ export default function ArchivePage() {
     const d = new Date(f.createdAt);
     const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
     if (!groups.has(key)) {
-      groups.set(key, { label: formatMonth(d), items: [] });
+      groups.set(key, { label: formatMonthYear(d, i18n.language), items: [] });
     }
     groups.get(key)!.items.push(f);
   }
@@ -72,7 +71,7 @@ export default function ArchivePage() {
       <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
         <header className="flex items-center justify-between mb-10">
           <h1 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink">
-            Archive
+            {t('archive.title')}
           </h1>
           {fragments.length > 0 && (
             <button
@@ -80,14 +79,14 @@ export default function ArchivePage() {
               onClick={handleExport}
               className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink"
             >
-              Export
+              {t('common.export')}
             </button>
           )}
         </header>
 
         {hydrated && fragments.length === 0 && (
           <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
-            Your archive is empty. Every fragment you save will live here.
+            {t('archive.empty')}
           </p>
         )}
 

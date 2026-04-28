@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Cormorant_Garamond, DM_Sans, DM_Mono } from 'next/font/google';
+import I18nProvider from '@/components/I18nProvider';
 import './globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -55,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-mnemo-bg text-mnemo-ink font-dm-sans">
-        {children}
+        <I18nProvider>{children}</I18nProvider>
         <Script id="mnemo-sw-register" strategy="afterInteractive">
           {`
             if ('serviceWorker' in navigator) {

@@ -1,0 +1,59 @@
+{
+  "common": {
+    "back": "Indietro",
+    "cancel": "Annulla",
+    "remove": "Rimuovi",
+    "save": "Salva",
+    "export": "Esporta"
+  },
+  "nav": {
+    "primary": "Principale",
+    "home": "Home",
+    "capture": "Scrivi",
+    "archive": "Archivio",
+    "profile": "Profilo"
+  },
+  "home": {
+    "storageUnavailable": "Mnemo funziona al meglio quando è disponibile lo spazio di archiviazione. Alcuni browser lo bloccano in modalità privata.",
+    "empty": "Ancora nulla qui. Comincia con un pensiero — qualcosa che vorresti ritrovare fra un anno.",
+    "newFragmentAria": "Nuovo frammento"
+  },
+  "capture": {
+    "title": "Nuovo frammento",
+    "placeholder": "A cosa stai pensando?",
+    "saved": "Salvato. Tornerà quando sarà il momento giusto.",
+    "morning": "Mattina",
+    "afternoon": "Pomeriggio",
+    "evening": "Sera",
+    "night": "Notte"
+  },
+  "archive": {
+    "title": "Archivio",
+    "empty": "Il tuo archivio è vuoto. Ogni frammento che salvi vivrà qui."
+  },
+  "resurface": {
+    "missing": "Quel frammento non è più qui.",
+    "explanation_one": "Questo frammento è riemerso perché lo hai scritto {{count}} giorno fa.",
+    "explanation_other": "Questo frammento è riemerso perché lo hai scritto {{count}} giorni fa.",
+    "notDueYet": "Questo frammento non è ancora pronto a riemergere.",
+    "seeInArchive": "Vedi nell'archivio →",
+    "bannerAria": "Un frammento precedente sta riemergendo",
+    "notNow": "Non ora",
+    "read": "Leggi →"
+  },
+  "fragmentItem": {
+    "removeConfirm": "Rimuovere questo frammento? L'azione è irreversibile."
+  },
+  "reactions": {
+    "prompt": "Come ti sembra oggi?",
+    "stillTrue": "Ancora vero",
+    "changed": "Tutto è cambiato",
+    "archive": "Archivia",
+    "archivedNote": "Archiviato. Non tornerà più a riemergere."
+  },
+  "profile": {
+    "title": "Profilo",
+    "settings": "Impostazioni",
+    "language": "Lingua"
+  }
+}

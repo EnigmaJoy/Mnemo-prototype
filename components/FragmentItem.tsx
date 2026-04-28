@@ -1,6 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { formatShortDate } from '@/lib/datetime';
 import type { Fragment } from '@/lib/types';
 
 interface Props {
@@ -12,6 +14,7 @@ const LONG_PRESS_MS = 600;
 const PREVIEW_LINES = 3;
 
 export default function FragmentItem({ fragment, onDelete }: Props) {
+  const { t, i18n } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -46,7 +49,7 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
     return (
       <div className="bg-mnemo-surface border border-mnemo-border rounded-lg p-4 my-2">
         <p className="font-dm-sans text-sm text-mnemo-ink mb-4">
-          Remove this fragment? This cannot be undone.
+          {t('fragmentItem.removeConfirm')}
         </p>
         <div className="flex gap-3">
           <button
@@ -57,14 +60,14 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
             }}
             className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-ink text-mnemo-ink"
           >
-            Remove
+            {t('common.remove')}
           </button>
           <button
             type="button"
             onClick={() => setConfirming(false)}
             className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-border text-mnemo-ink-secondary"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
         </div>
       </div>
@@ -95,7 +98,7 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
       onMouseLeave={cancelPress}
     >
       <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary mb-2">
-        {formatDate(fragment.createdAt)}
+        {formatShortDate(fragment.createdAt, i18n.language)}
       </div>
       <p className="font-cormorant italic text-mnemo-ink text-lg leading-relaxed whitespace-pre-wrap">
         {expanded ? fragment.content : preview}
@@ -112,13 +115,4 @@ function firstNLines(content: string, n: number): string {
 
 function hasMoreThanNLines(content: string, n: number): boolean {
   return content.split('\n').length > n;
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
 }

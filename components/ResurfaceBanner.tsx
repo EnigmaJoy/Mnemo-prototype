@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import type { Fragment, Resurface } from '@/lib/types';
 import { addDismissedId } from '@/lib/storage';
+import { formatRelativeDays } from '@/lib/datetime';
 
 interface Props {
   fragment: Fragment;
@@ -10,17 +12,13 @@ interface Props {
   onDismiss: () => void;
 }
 
-const TRIGGER_LABELS: Record<Resurface['triggerType'], string> = {
-  day_7:  '7 days ago',
-  day_14: '14 days ago',
-  day_30: '30 days ago',
-};
-
 function firstNLines(content: string, n: number): string {
   return content.split('\n').slice(0, n).join('\n');
 }
 
 export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: Props) {
+  const { t, i18n } = useTranslation();
+
   const handleDismiss = () => {
     addDismissedId(fragment.id);
     onDismiss();
@@ -29,11 +27,11 @@ export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: Pr
   return (
     <div
       role="region"
-      aria-label="A previous fragment is resurfacing"
+      aria-label={t('resurface.bannerAria')}
       className="bg-mnemo-dark rounded-xl p-5 animate-slide-fade-in"
     >
       <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-gold mb-3">
-        {TRIGGER_LABELS[triggerType]}
+        {formatRelativeDays(triggerType, i18n.language)}
       </div>
       <p
         className="font-cormorant italic text-base leading-relaxed mb-5 whitespace-pre-wrap"
@@ -46,14 +44,14 @@ export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: Pr
           href={`/resurface/${fragment.id}`}
           className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-gold"
         >
-          Read →
+          {t('resurface.read')}
         </Link>
         <button
           type="button"
           onClick={handleDismiss}
           className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-ink-tertiary"
         >
-          Not now
+          {t('resurface.notNow')}
         </button>
       </div>
     </div>

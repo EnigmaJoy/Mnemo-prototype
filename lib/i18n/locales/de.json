@@ -1,0 +1,59 @@
+{
+  "common": {
+    "back": "Zurück",
+    "cancel": "Abbrechen",
+    "remove": "Entfernen",
+    "save": "Speichern",
+    "export": "Exportieren"
+  },
+  "nav": {
+    "primary": "Hauptnavigation",
+    "home": "Start",
+    "capture": "Schreiben",
+    "archive": "Archiv",
+    "profile": "Profil"
+  },
+  "home": {
+    "storageUnavailable": "Mnemo funktioniert am besten, wenn Speicher verfügbar ist. Manche Browser blockieren ihn im privaten Modus.",
+    "empty": "Hier ist noch nichts. Beginne mit einem Gedanken — etwas, das du in einem Jahr wiederfinden möchtest.",
+    "newFragmentAria": "Neues Fragment"
+  },
+  "capture": {
+    "title": "Neues Fragment",
+    "placeholder": "Woran denkst du?",
+    "saved": "Gespeichert. Es kehrt wieder, wenn die Zeit reif ist.",
+    "morning": "Morgen",
+    "afternoon": "Nachmittag",
+    "evening": "Abend",
+    "night": "Nacht"
+  },
+  "archive": {
+    "title": "Archiv",
+    "empty": "Dein Archiv ist leer. Jedes Fragment, das du speicherst, lebt hier."
+  },
+  "resurface": {
+    "missing": "Dieses Fragment ist nicht mehr hier.",
+    "explanation_one": "Dieses Fragment ist aufgetaucht, weil du es vor {{count}} Tag geschrieben hast.",
+    "explanation_other": "Dieses Fragment ist aufgetaucht, weil du es vor {{count}} Tagen geschrieben hast.",
+    "notDueYet": "Dieses Fragment ist noch nicht bereit, wieder aufzutauchen.",
+    "seeInArchive": "Im Archiv ansehen →",
+    "bannerAria": "Ein früheres Fragment taucht wieder auf",
+    "notNow": "Nicht jetzt",
+    "read": "Lesen →"
+  },
+  "fragmentItem": {
+    "removeConfirm": "Dieses Fragment entfernen? Das lässt sich nicht rückgängig machen."
+  },
+  "reactions": {
+    "prompt": "Wie fühlt es sich heute an?",
+    "stillTrue": "Immer noch wahr",
+    "changed": "Alles hat sich geändert",
+    "archive": "Archivieren",
+    "archivedNote": "Archiviert. Es taucht nicht wieder auf."
+  },
+  "profile": {
+    "title": "Profil",
+    "settings": "Einstellungen",
+    "language": "Sprache"
+  }
+}

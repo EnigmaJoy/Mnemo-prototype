@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { saveFragment } from '@/lib/storage';
 import type { Fragment } from '@/lib/types';
 
@@ -10,22 +11,23 @@ const MAX_CHARS = 2000;
 const COUNTER_RED_OVER = 1900;
 const SAVED_REDIRECT_MS = 1500;
 
-function timeOfDay(hour: number): string {
-  if (hour >= 5  && hour <= 11) return 'Morning';
-  if (hour >= 12 && hour <= 17) return 'Afternoon';
-  if (hour >= 18 && hour <= 21) return 'Evening';
-  return 'Night';
+function timeOfDayKey(hour: number): string {
+  if (hour >= 5  && hour <= 11) return 'capture.morning';
+  if (hour >= 12 && hour <= 17) return 'capture.afternoon';
+  if (hour >= 18 && hour <= 21) return 'capture.evening';
+  return 'capture.night';
 }
 
-function formatDate(d: Date): string {
-  return d.toLocaleDateString('en-GB', {
+function formatDate(d: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  });
+  }).format(d);
 }
 
 export default function CapturePage() {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState('');
@@ -61,7 +63,7 @@ export default function CapturePage() {
       <header className="flex items-center justify-between mb-10">
         <Link
           href="/"
-          aria-label="Back"
+          aria-label={t('common.back')}
           className="flex items-center gap-2 text-mnemo-ink"
         >
           <svg
@@ -78,7 +80,7 @@ export default function CapturePage() {
             <path d="M15 18l-6-6 6-6" />
           </svg>
           <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em]">
-            New fragment
+            {t('capture.title')}
           </span>
         </Link>
         <button
@@ -91,13 +93,13 @@ export default function CapturePage() {
               : 'text-mnemo-ink-tertiary cursor-not-allowed'
           }`}
         >
-          Save
+          {t('common.save')}
         </button>
       </header>
 
       {saved ? (
         <p className="font-cormorant italic text-2xl text-mnemo-ink leading-relaxed mt-12">
-          Saved. It will return when the time is right.
+          {t('capture.saved')}
         </p>
       ) : (
         <>
@@ -107,7 +109,7 @@ export default function CapturePage() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               maxLength={MAX_CHARS}
-              placeholder="What's on your mind?"
+              placeholder={t('capture.placeholder')}
               rows={6}
               className="w-full bg-transparent border-0 outline-none resize-none font-cormorant italic text-[18px] leading-relaxed text-mnemo-ink placeholder:text-mnemo-ink-tertiary py-2 min-h-[160px]"
             />
@@ -125,10 +127,10 @@ export default function CapturePage() {
           {contextNow && (
             <div className="border-t border-mnemo-border pt-5 flex flex-wrap gap-2">
               <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
-                {formatDate(contextNow)}
+                {formatDate(contextNow, i18n.language)}
               </span>
               <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
-                {timeOfDay(contextNow.getHours())}
+                {t(timeOfDayKey(contextNow.getHours()))}
               </span>
             </div>
           )}

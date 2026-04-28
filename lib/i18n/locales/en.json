@@ -1,0 +1,59 @@
+{
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "save": "Save",
+    "export": "Export"
+  },
+  "nav": {
+    "primary": "Primary",
+    "home": "Home",
+    "capture": "Capture",
+    "archive": "Archive",
+    "profile": "Profile"
+  },
+  "home": {
+    "storageUnavailable": "Mnemo works best when storage is available. Some browsers block this in private mode.",
+    "empty": "Nothing here yet. Start with one thought — anything you'd want to find a year from now.",
+    "newFragmentAria": "New fragment"
+  },
+  "capture": {
+    "title": "New fragment",
+    "placeholder": "What's on your mind?",
+    "saved": "Saved. It will return when the time is right.",
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening",
+    "night": "Night"
+  },
+  "archive": {
+    "title": "Archive",
+    "empty": "Your archive is empty. Every fragment you save will live here."
+  },
+  "resurface": {
+    "missing": "That fragment is no longer here.",
+    "explanation_one": "This fragment surfaced because you wrote it {{count}} day ago.",
+    "explanation_other": "This fragment surfaced because you wrote it {{count}} days ago.",
+    "notDueYet": "This fragment isn't due to surface yet.",
+    "seeInArchive": "See in Archive →",
+    "bannerAria": "A previous fragment is resurfacing",
+    "notNow": "Not now",
+    "read": "Read →"
+  },
+  "fragmentItem": {
+    "removeConfirm": "Remove this fragment? This cannot be undone."
+  },
+  "reactions": {
+    "prompt": "How does it feel today?",
+    "stillTrue": "Still true",
+    "changed": "Everything changed",
+    "archive": "Archive",
+    "archivedNote": "Archived. It won't surface again."
+  },
+  "profile": {
+    "title": "Profile",
+    "settings": "Settings",
+    "language": "Language"
+  }
+}

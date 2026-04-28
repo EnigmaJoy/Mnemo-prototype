@@ -1,0 +1,58 @@
+{
+  "common": {
+    "back": "返回",
+    "cancel": "取消",
+    "remove": "删除",
+    "save": "保存",
+    "export": "导出"
+  },
+  "nav": {
+    "primary": "主导航",
+    "home": "首页",
+    "capture": "记录",
+    "archive": "归档",
+    "profile": "个人"
+  },
+  "home": {
+    "storageUnavailable": "当存储可用时，Mnemo 才能正常工作。某些浏览器在隐私模式下会阻止存储。",
+    "empty": "这里还什么都没有。从一个想法开始——任何你希望一年后还能找到的东西。",
+    "newFragmentAria": "新的片段"
+  },
+  "capture": {
+    "title": "新的片段",
+    "placeholder": "你在想什么？",
+    "saved": "已保存。时机到来时，它会回来。",
+    "morning": "上午",
+    "afternoon": "下午",
+    "evening": "傍晚",
+    "night": "夜晚"
+  },
+  "archive": {
+    "title": "归档",
+    "empty": "你的归档是空的。你保存的每一个片段都将留在这里。"
+  },
+  "resurface": {
+    "missing": "这个片段已经不在了。",
+    "explanation_other": "这个片段重新浮现，因为你在 {{count}} 天前写下它。",
+    "notDueYet": "这个片段还没有到浮现的时候。",
+    "seeInArchive": "在归档中查看 →",
+    "bannerAria": "一个旧片段正在浮现",
+    "notNow": "暂不",
+    "read": "阅读 →"
+  },
+  "fragmentItem": {
+    "removeConfirm": "删除这个片段？此操作无法撤销。"
+  },
+  "reactions": {
+    "prompt": "今天看来如何？",
+    "stillTrue": "依然如此",
+    "changed": "一切都变了",
+    "archive": "归档",
+    "archivedNote": "已归档。不会再次浮现。"
+  },
+  "profile": {
+    "title": "个人",
+    "settings": "设置",
+    "language": "语言"
+  }
+}

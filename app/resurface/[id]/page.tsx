@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import ReactionButtons from '@/components/ReactionButtons';
 import {
   getFragments,
@@ -10,29 +11,11 @@ import {
   saveResurfacing,
 } from '@/lib/storage';
 import { daysSince, getTriggerType } from '@/lib/resurfacing';
+import { formatLongDate, formatRelativeDays, getTriggerDays } from '@/lib/datetime';
 import type { Fragment, Resurface } from '@/lib/types';
 
-const TRIGGER_LABEL: Record<Resurface['triggerType'], string> = {
-  day_7:  '7 days ago',
-  day_14: '14 days ago',
-  day_30: '30 days ago',
-};
-
-const TRIGGER_DAYS: Record<Resurface['triggerType'], number> = {
-  day_7: 7,
-  day_14: 14,
-  day_30: 30,
-};
-
-function formatLongDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
 export default function ResurfaceDetailPage() {
+  const { t, i18n } = useTranslation();
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const [hydrated, setHydrated] = useState(false);
@@ -86,7 +69,7 @@ export default function ResurfaceDetailPage() {
       <header className="mb-12">
         <Link
           href="/"
-          aria-label="Back"
+          aria-label={t('common.back')}
           className="inline-flex items-center text-mnemo-ink"
         >
           <svg
@@ -107,17 +90,17 @@ export default function ResurfaceDetailPage() {
 
       {hydrated && !fragment && (
         <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed">
-          That fragment is no longer here.
+          {t('resurface.missing')}
         </p>
       )}
 
       {hydrated && fragment && triggerType && (
         <article>
           <div className="font-dm-mono text-[11px] uppercase tracking-[0.18em] text-mnemo-gold mb-2">
-            {TRIGGER_LABEL[triggerType]}
+            {formatRelativeDays(triggerType, i18n.language)}
           </div>
           <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary mb-10">
-            {formatLongDate(fragment.createdAt)}
+            {formatLongDate(fragment.createdAt, i18n.language)}
           </div>
 
           <div
@@ -137,8 +120,7 @@ export default function ResurfaceDetailPage() {
           <hr className="border-0 border-t border-mnemo-border my-10" />
 
           <p className="font-dm-sans text-sm text-mnemo-ink-tertiary mb-10">
-            This fragment surfaced because you wrote it{' '}
-            {TRIGGER_DAYS[triggerType]} days ago.
+            {t('resurface.explanation', { count: getTriggerDays(triggerType) })}
           </p>
 
           <ReactionButtons
@@ -151,7 +133,7 @@ export default function ResurfaceDetailPage() {
               href="/archive"
               className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary"
             >
-              See in Archive →
+              {t('resurface.seeInArchive')}
             </Link>
           </div>
         </article>
@@ -160,13 +142,13 @@ export default function ResurfaceDetailPage() {
       {hydrated && fragment && !triggerType && (
         <div>
           <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed">
-            {"This fragment isn't due to surface yet."}
+            {t('resurface.notDueYet')}
           </p>
           <Link
             href="/archive"
             className="inline-block mt-6 font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary"
           >
-            See in Archive →
+            {t('resurface.seeInArchive')}
           </Link>
         </div>
       )}
