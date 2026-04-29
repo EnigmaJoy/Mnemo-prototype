@@ -80,7 +80,7 @@ export default function ArchivePage() {
           <h1 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink">
             {t('archive.title')}
           </h1>
-          {fragments.length > 0 && (
+          {/*{fragments.length > 0 && (
             <button
               type="button"
               onClick={handleExport}
@@ -88,7 +88,7 @@ export default function ArchivePage() {
             >
               {t('common.export')}
             </button>
-          )}
+          )}*/}
         </header>
 
         {hydrated && fragments.length === 0 && (

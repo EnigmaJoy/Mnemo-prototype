@@ -44,7 +44,8 @@ export default function AudioPlayer({ blob }: Props) {
         setDuration(buf.duration);
         setReady(true);
       } catch {
-        // decoding failed — leave UI in not-ready state
+        // decoding failed - leave UI in not-ready state
+        console.error('decoding failed');
       }
     })();
     return () => {
@@ -65,7 +66,7 @@ export default function AudioPlayer({ blob }: Props) {
   const tick = () => {
     const ctx = ctxRef.current;
     const buf = bufferRef.current;
-    if (!ctx || !buf) return;
+    if (!ctx || !buf || !(ctx && buf)) return;
     const elapsed = ctx.currentTime - startedAtRef.current;
     const t = offsetRef.current + elapsed;
     if (t >= buf.duration) {
@@ -83,7 +84,7 @@ export default function AudioPlayer({ blob }: Props) {
   const startPlayback = () => {
     const ctx = ctxRef.current;
     const buf = bufferRef.current;
-    if (!ctx || !buf) return;
+    if (!ctx || !buf || !(ctx && buf)) return;
     if (ctx.state === 'suspended') void ctx.resume();
     const source = ctx.createBufferSource();
     source.buffer = buf;
