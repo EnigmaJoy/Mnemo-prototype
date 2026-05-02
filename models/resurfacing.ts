@@ -1,7 +1,20 @@
-// lib/resurfacing.ts
-import type { Fragment, Resurface, ResurfacingCandidate } from './types';
+import type { Fragment } from './fragment';
 
-const MS_PER_DAY = 86_400_000;
+export interface Resurface {
+  fragmentId: string;
+  shownAt: string;
+  reaction: 'still_true' | 'changed' | 'archived' | null;
+  triggerType: 'day_7' | 'day_14' | 'day_30';
+}
+
+export interface ResurfacingCandidate {
+  fragment: Fragment;
+  triggerType: Resurface['triggerType'];
+}
+
+export const MS_PER_DAY = 86_400_000;
+
+export const DAYS_TO_FIRST_RESURFACE = 7;
 
 const TRIGGER_WINDOWS: ReadonlyArray<{
   type: Resurface['triggerType'];
@@ -13,35 +26,45 @@ const TRIGGER_WINDOWS: ReadonlyArray<{
   { type: 'day_30', min: 29, max: 31 },
 ];
 
+const TRIGGER_DAYS: Record<Resurface['triggerType'], number> = {
+  day_7: 7,
+  day_14: 14,
+  day_30: 30,
+};
+
+export function getTriggerDays(triggerType: Resurface['triggerType']): number {
+  return TRIGGER_DAYS[triggerType];
+}
+
 export function daysSince(createdAt: string, now: Date = new Date()): number {
   return Math.floor((now.getTime() - Date.parse(createdAt)) / MS_PER_DAY);
 }
 
 export function getTriggerType(days: number): Resurface['triggerType'] | null {
-  for (const w of TRIGGER_WINDOWS) {
-    if (days >= w.min && days <= w.max) return w.type;
+  for (const window of TRIGGER_WINDOWS) {
+    if (days >= window.min && days <= window.max) return window.type;
   }
   return null;
 }
 
 export function hasHadFirstResurfacing(history: Resurface[]): boolean {
-  return history.some((r) => r.shownAt !== null);
+  return history.length > 0;
 }
 
-/**
- * Selects at most one fragment to resurface. Pure - caller supplies inputs.
- * Excludes fragments already reacted to (any non-null reaction) and any
- * dismissed via "Not now" this session. Among the rest, picks the most
- * recently created.
- */
+export function isReactedTo(history: Resurface[], fragmentId: string): boolean {
+  return history.some((record) =>
+    record.fragmentId === fragmentId && record.reaction !== null,
+  );
+}
+
 export function selectResurfacingCandidate(
   fragments: Fragment[],
   history: Resurface[],
   dismissedIds: string[],
-  now: Date = new Date()
+  now: Date = new Date(),
 ): ResurfacingCandidate | null {
   const reactedIds = new Set(
-    history.filter(r => r.reaction !== null).map(r => r.fragmentId)
+    history.filter((record) => record.reaction !== null).map((record) => record.fragmentId),
   );
   const dismissedSet = new Set(dismissedIds);
 

@@ -66,6 +66,7 @@
   },
   "capture": {
     "title": "Neues Fragment",
+    "tabsAria": "Aufnahmemodus",
     "placeholder": "Woran denkst du?",
     "saved": "Gespeichert. Es kehrt wieder, wenn die Zeit reif ist.",
     "morning": "Morgen",

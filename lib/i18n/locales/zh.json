@@ -19,6 +19,7 @@
     "newFragmentAria": "新的片段",
     "firstResurfacing": {
       "label": "首次浮现",
+      "message_one": "{{count}} 天后，你的第一个想法将回来。",
       "message_other": "{{count}} 天后，你的第一个想法将回来。",
       "empty": "记下你的第一个想法--它会在 7 天后回来。"
     },
@@ -65,6 +66,7 @@
   },
   "capture": {
     "title": "新的片段",
+    "tabsAria": "记录方式",
     "placeholder": "你在想什么？",
     "saved": "已保存。时机到来时，它会回来。",
     "morning": "上午",
@@ -96,6 +98,7 @@
   },
   "resurface": {
     "missing": "这个片段已经不在了。",
+    "explanation_one": "这个片段重新浮现，因为你在 {{count}} 天前写下它。",
     "explanation_other": "这个片段重新浮现，因为你在 {{count}} 天前写下它。",
     "notDueYet": "这个片段还没有到浮现的时候。",
     "seeInArchive": "在归档中查看 →",

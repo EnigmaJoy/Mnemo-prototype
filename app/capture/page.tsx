@@ -4,17 +4,20 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { saveFragment } from '@/lib/storage';
-import { saveAudioBlob } from '@/lib/audio/db';
 import { AudioRecorder, isAudioRecordingSupported } from '@/lib/audio/recorder';
 import RecordingSphere from '@/components/RecordingSphere';
 import AudioPlayer from '@/components/AudioPlayer';
-import type { Fragment } from '@/lib/types';
+import {
+  saveAudioFragment,
+  saveTextFragment,
+} from '@/controllers/fragmentController';
+import { consumePromptOverride } from '@/controllers/captureController';
+import { getTimeOfDayKey } from '@/models/timeOfDay';
+import { formatShortDate } from '@/lib/datetime';
 
 const MAX_CHARS = 2000;
 const COUNTER_RED_OVER = 1900;
 const SAVED_REDIRECT_MS = 1500;
-const PROMPT_STORAGE_KEY = 'mnemo_capture_prompt';
 const MAX_RECORD_SECONDS = 30;
 
 type Mode = 'text' | 'audio';
@@ -26,21 +29,6 @@ type RecState =
   | 'transcribing'
   | 'edit'
   | 'failed';
-
-function timeOfDayKey(hour: number): string {
-  if (hour >= 5  && hour <= 11) return 'capture.morning';
-  if (hour >= 12 && hour <= 17) return 'capture.afternoon';
-  if (hour >= 18 && hour <= 21) return 'capture.evening';
-  return 'capture.night';
-}
-
-function formatDate(d: Date, locale: string): string {
-  return new Intl.DateTimeFormat(locale, {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).format(d);
-}
 
 export default function CapturePage() {
   const { t, i18n } = useTranslation();
@@ -55,7 +43,6 @@ export default function CapturePage() {
   const [placeholderOverride, setPlaceholderOverride] = useState<string | null>(null);
   const [audioSupported, setAudioSupported] = useState(true);
 
-  // audio recording state
   const [recState, setRecState] = useState<RecState>('idle');
   const [recError, setRecError] = useState<string | null>(null);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
@@ -65,17 +52,8 @@ export default function CapturePage() {
   const [micStream, setMicStream] = useState<MediaStream | null>(null);
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect --
-       one-time read of wall-clock time + sessionStorage prompt on mount */
-    try {
-      const stored = sessionStorage.getItem(PROMPT_STORAGE_KEY);
-      if (stored) {
-        setPlaceholderOverride(stored);
-        sessionStorage.removeItem(PROMPT_STORAGE_KEY);
-      }
-    } catch {
-      // sessionStorage unavailable - fall back to default placeholder
-    }
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setPlaceholderOverride(consumePromptOverride());
     setContextNow(new Date());
     setAudioSupported(isAudioRecordingSupported());
     textareaRef.current?.focus();
@@ -134,7 +112,6 @@ export default function CapturePage() {
     }
   };
 
-  // countdown - auto-stop at MAX_RECORD_SECONDS
   useEffect(() => {
     if (recState !== 'recording') return;
     if (seconds >= MAX_RECORD_SECONDS) {
@@ -143,7 +120,7 @@ export default function CapturePage() {
     }
     const id = setTimeout(() => setSeconds((s) => s + 1), 1000);
     return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleStopRecord uses refs/state setters; re-running on its identity would restart the timer
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recState, seconds]);
 
   const handleTranscribe = async () => {
@@ -171,47 +148,27 @@ export default function CapturePage() {
     }
   };
 
-  const handleSaveText = () => {
+  const handleSaveText = async () => {
     if (content.trim().length === 0 || saved) return;
-    const iso = new Date().toISOString();
-    const fragment: Fragment = {
-      id: crypto.randomUUID(),
-      content: content.trim(),
-      createdAt: iso,
-      updatedAt: iso,
-      type: 'text',
-    };
-    saveFragment(fragment);
+    await saveTextFragment(content);
     setSaved(true);
     setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
   };
 
   const handleSaveAudio = async () => {
     if (!recordedBlob || transcript.trim().length === 0 || saved) return;
-    const id = crypto.randomUUID();
-    const audioId = `audio-${id}`;
     try {
-      await saveAudioBlob(audioId, recordedBlob);
+      await saveAudioFragment(transcript, recordedBlob);
     } catch {
       setRecError(t('capture.record.transcriptionFailed'));
       return;
     }
-    const iso = new Date().toISOString();
-    const fragment: Fragment = {
-      id,
-      content: transcript.trim(),
-      createdAt: iso,
-      updatedAt: iso,
-      type: 'audio',
-      audioId,
-    };
-    saveFragment(fragment);
     setSaved(true);
     setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
   };
 
   const handleSave = () => {
-    if (mode === 'text') handleSaveText();
+    if (mode === 'text') void handleSaveText();
     else void handleSaveAudio();
   };
 
@@ -225,12 +182,12 @@ export default function CapturePage() {
       : recState === 'edit' && transcript.trim().length > 0;
 
   return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-6 pb-12">
+    <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
       <header className="flex items-center justify-between mb-6">
         <Link
           href="/"
           aria-label={t('common.back')}
-          className="flex items-center gap-2 text-mnemo-ink"
+          className="flex items-center gap-2 text-mnemo-ink py-2"
         >
           <svg
             width="20"
@@ -253,7 +210,7 @@ export default function CapturePage() {
           type="button"
           onClick={handleSave}
           disabled={!canSave}
-          className={`font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+          className={`font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors py-2 px-1 ${
             canSave
               ? 'text-mnemo-ink'
               : 'text-mnemo-ink-tertiary cursor-not-allowed'
@@ -264,7 +221,7 @@ export default function CapturePage() {
       </header>
 
       {!saved && (
-        <div role="tablist" aria-label="Capture mode" className="flex border-b border-mnemo-border mb-6">
+        <div role="tablist" aria-label={t('capture.tabsAria')} className="flex border-b border-mnemo-border mb-6">
           <button
             role="tab"
             type="button"
@@ -327,10 +284,10 @@ export default function CapturePage() {
           {contextNow && (
             <div className="border-t border-mnemo-border pt-5 flex flex-wrap gap-2">
               <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
-                {formatDate(contextNow, i18n.language)}
+                {formatShortDate(contextNow.toISOString(), i18n.language)}
               </span>
               <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
-                {t(timeOfDayKey(contextNow.getHours()))}
+                {t(getTimeOfDayKey(contextNow.getHours()))}
               </span>
             </div>
           )}
@@ -420,11 +377,10 @@ function RecordPanel({
 
       {recState === 'recording' && (
         <>
-          <div className="relative mb-8 flex items-center justify-center" style={{ width: 240, height: 240 }}>
+          <div className="relative mb-8 flex items-center justify-center w-60 h-60">
             <RecordingSphere stream={micStream} size={240} />
             <div
-              className="pointer-events-none absolute inset-0 flex items-center justify-center font-cormorant font-light text-mnemo-ink leading-none tabular-nums"
-              style={{ fontSize: '56px' }}
+              className="pointer-events-none absolute inset-0 flex items-center justify-center font-cormorant font-light text-mnemo-ink leading-none tabular-nums text-[56px]"
               aria-live="polite"
             >
               {remainingSeconds}
@@ -437,7 +393,7 @@ function RecordPanel({
           >
             <StopIcon />
           </button>
-          <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-gold mt-4">
+          <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mt-4">
             {t('capture.record.recording')}
           </p>
         </>
@@ -452,14 +408,14 @@ function RecordPanel({
             <button
               type="button"
               onClick={onRerecord}
-              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-border text-mnemo-ink-secondary"
+              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 border border-mnemo-border text-mnemo-ink-secondary"
             >
               {t('capture.record.rerecord')}
             </button>
             <button
               type="button"
               onClick={onTranscribe}
-              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-ink text-mnemo-ink"
+              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 border border-mnemo-ink text-mnemo-ink"
             >
               {t('capture.record.transcribe')}
             </button>
@@ -469,7 +425,7 @@ function RecordPanel({
 
       {(recState === 'modelLoading' || recState === 'transcribing') && (
         <div className="text-center">
-          <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-gold mb-3">
+          <p className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-3">
             {recState === 'modelLoading'
               ? t('capture.record.modelLoading')
               : t('capture.record.transcribing')}
@@ -508,7 +464,7 @@ function RecordPanel({
           <button
             type="button"
             onClick={onRerecord}
-            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary"
+            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary py-2"
           >
             {t('capture.record.rerecord')}
           </button>
@@ -523,7 +479,7 @@ function RecordPanel({
           <button
             type="button"
             onClick={onRerecord}
-            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-ink text-mnemo-ink"
+            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 border border-mnemo-ink text-mnemo-ink"
           >
             {t('capture.record.rerecord')}
           </button>

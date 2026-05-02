@@ -1,0 +1,126 @@
+{
+  "common": {
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "remove": "Eliminar",
+    "save": "Guardar",
+    "export": "Exportar"
+  },
+  "nav": {
+    "primary": "Principal",
+    "home": "Inicio",
+    "capture": "Escribir",
+    "archive": "Archivo",
+    "profile": "Perfil"
+  },
+  "home": {
+    "storageUnavailable": "Mnemo funciona mejor cuando el almacenamiento está disponible. Algunos navegadores lo bloquean en modo privado.",
+    "empty": "Aún no hay nada aquí. Comienza con un pensamiento - algo que quisieras encontrar dentro de un año.",
+    "newFragmentAria": "Nuevo fragmento",
+    "firstResurfacing": {
+      "label": "Primera reaparición",
+      "message_one": "En {{count}} día, tu primer pensamiento regresará.",
+      "message_other": "En {{count}} días, tu primer pensamiento regresará.",
+      "empty": "Guarda tu primer pensamiento - regresará en 7 días."
+    },
+    "stats": {
+      "fragments": "Fragmentos",
+      "days": "Días",
+      "recurringWord": "Palabra recurrente"
+    },
+    "dailyPrompt": {
+      "label": "Inspiración",
+      "prompts": [
+        "What did you learn today that you'd want to remember?",
+        "What surprised you this week?",
+        "What would you want to find here a year from now?",
+        "What decision are you facing right now?",
+        "What are you afraid of losing?",
+        "What has changed in you recently?",
+        "What do you keep coming back to?",
+        "What did you almost say, but didn't?",
+        "What do you want to remember about today?",
+        "What is pulling your attention right now?",
+        "What belief of yours has shifted lately?",
+        "What would your future self thank you for noticing?",
+        "What is something you understood differently today?",
+        "What are you holding onto that you might need to release?",
+        "What made you feel most like yourself recently?",
+        "What question keeps coming back to you?",
+        "What do you know now that you didn't know a month ago?",
+        "What are you becoming?",
+        "What would you regret not writing down?",
+        "What is quietly true about your life right now?",
+        "What are you grateful for that you haven't said out loud?",
+        "What has been harder than you expected?",
+        "What has been easier than you expected?",
+        "What do you want to remember about this phase of your life?",
+        "What are you pretending not to know?",
+        "What small thing has mattered more than expected?",
+        "What conversation changed something in you?",
+        "What have you been avoiding thinking about?",
+        "What do you stand for right now?",
+        "What is the most honest thing you could write today?"
+      ]
+    }
+  },
+  "capture": {
+    "title": "Nuevo fragmento",
+    "tabsAria": "Modo de captura",
+    "placeholder": "¿En qué estás pensando?",
+    "saved": "Guardado. Volverá cuando llegue su momento.",
+    "morning": "Mañana",
+    "afternoon": "Tarde",
+    "evening": "Noche",
+    "night": "Madrugada",
+    "tabs": {
+      "write": "Escribir",
+      "record": "Grabar"
+    },
+    "record": {
+      "notSupported": "La grabación de audio no es compatible con este navegador.",
+      "permissionDenied": "Acceso al micrófono denegado.",
+      "instruction": "Toca el micrófono para grabar hasta 30 segundos.",
+      "recording": "Grabando…",
+      "stop": "Detener",
+      "rerecord": "Volver a grabar",
+      "transcribe": "Transcribir",
+      "modelLoading": "Cargando modelo de voz…",
+      "transcribing": "Transcribiendo…",
+      "transcriptHint": "Edita la transcripción antes de guardar si es necesario.",
+      "transcriptEmpty": "La transcripción no puede estar vacía.",
+      "transcriptionFailed": "No se pudo transcribir. Inténtalo de nuevo."
+    }
+  },
+  "archive": {
+    "title": "Archivo",
+    "empty": "Tu archivo está vacío. Cada fragmento que guardes vivirá aquí."
+  },
+  "resurface": {
+    "missing": "Ese fragmento ya no está aquí.",
+    "explanation_one": "Este fragmento ha reaparecido porque lo escribiste hace {{count}} día.",
+    "explanation_other": "Este fragmento ha reaparecido porque lo escribiste hace {{count}} días.",
+    "notDueYet": "Este fragmento aún no está listo para reaparecer.",
+    "seeInArchive": "Ver en el archivo →",
+    "bannerAria": "Un fragmento anterior está reapareciendo",
+    "notNow": "Ahora no",
+    "read": "Leer →"
+  },
+  "fragmentItem": {
+    "removeConfirm": "¿Eliminar este fragmento? No se puede deshacer.",
+    "audioBadge": "Audio",
+    "playAria": "Reproducir grabación"
+  },
+  "reactions": {
+    "prompt": "¿Cómo se siente hoy?",
+    "stillTrue": "Sigue siendo cierto",
+    "changed": "Todo ha cambiado",
+    "archive": "Archivar",
+    "archivedNote": "Archivado. No volverá a reaparecer."
+  },
+  "profile": {
+    "title": "Perfil",
+    "settings": "Ajustes",
+    "language": "Idioma"
+  }
+}

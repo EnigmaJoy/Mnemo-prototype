@@ -1,4 +1,4 @@
-export const SUPPORTED_LOCALES = ['en', 'it', 'de', 'fr', 'zh-CN'] as const;
+export const SUPPORTED_LOCALES = ['en', 'it', 'de', 'fr', 'es', 'zh'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = 'en';
@@ -9,7 +9,8 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   it: 'Italiano',
   de: 'Deutsch',
   fr: 'Français',
-  'zh-CN': '简体中文',
+  es: 'Español',
+  zh: '中文',
 };
 
 function isSupported(value: string): value is Locale {
@@ -23,7 +24,7 @@ export function detectInitialLocale(): Locale {
     const saved = localStorage.getItem(LOCALE_STORAGE_KEY);
     if (saved && isSupported(saved)) return saved;
   } catch {
-    // localStorage unavailable - fall through to navigator detection
+    /* localStorage unavailable; fall through to navigator detection */
   }
 
   const nav = navigator.language;

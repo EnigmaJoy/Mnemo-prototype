@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import type { Fragment, Resurface } from '@/lib/types';
-import { addDismissedId } from '@/lib/storage';
+import type { Fragment } from '@/models/fragment';
+import type { Resurface } from '@/models/resurfacing';
 import { formatRelativeDays } from '@/lib/datetime';
 
 interface Props {
@@ -19,11 +19,6 @@ function firstNLines(content: string, n: number): string {
 export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: Props) {
   const { t, i18n } = useTranslation();
 
-  const handleDismiss = () => {
-    addDismissedId(fragment.id);
-    onDismiss();
-  };
-
   return (
     <div
       role="region"
@@ -33,23 +28,20 @@ export default function ResurfaceBanner({ fragment, triggerType, onDismiss }: Pr
       <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-gold mb-3">
         {formatRelativeDays(triggerType, i18n.language)}
       </div>
-      <p
-        className="font-cormorant italic text-base leading-relaxed mb-5 whitespace-pre-wrap"
-        style={{ color: 'rgba(245, 241, 234, 0.88)' }}
-      >
+      <p className="font-cormorant italic text-base leading-relaxed mb-5 whitespace-pre-wrap text-mnemo-bg/90">
         {firstNLines(fragment.content, 2)}
       </p>
       <div className="flex items-center justify-between">
         <Link
           href={`/resurface/${fragment.id}`}
-          className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-gold"
+          className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-gold py-2"
         >
           {t('resurface.read')}
         </Link>
         <button
           type="button"
-          onClick={handleDismiss}
-          className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-ink-tertiary"
+          onClick={onDismiss}
+          className="font-dm-mono text-xs uppercase tracking-[0.18em] text-mnemo-ink-tertiary py-2 px-1"
         >
           {t('resurface.notNow')}
         </button>

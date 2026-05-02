@@ -1,6 +1,3 @@
-// MediaRecorder wrapper. Single-instance lifecycle: start → stop → cleanup.
-// Cancel discards both the in-flight recording and the mic stream.
-
 export class AudioRecorder {
   private mr: MediaRecorder | null = null;
   private chunks: Blob[] = [];
@@ -45,7 +42,7 @@ export class AudioRecorder {
       try {
         this.mr.stop();
       } catch {
-        // ignore - cleanup() releases the stream regardless
+        /* cleanup() releases the stream regardless */
       }
     }
     this.cleanup();

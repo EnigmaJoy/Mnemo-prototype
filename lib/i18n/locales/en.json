@@ -66,6 +66,7 @@
   },
   "capture": {
     "title": "New fragment",
+    "tabsAria": "Capture mode",
     "placeholder": "What's on your mind?",
     "saved": "Saved. It will return when the time is right.",
     "morning": "Morning",

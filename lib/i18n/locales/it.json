@@ -66,6 +66,7 @@
   },
   "capture": {
     "title": "Nuovo frammento",
+    "tabsAria": "Modalità di cattura",
     "placeholder": "A cosa stai pensando?",
     "saved": "Salvato. Tornerà quando sarà il momento giusto.",
     "morning": "Mattina",

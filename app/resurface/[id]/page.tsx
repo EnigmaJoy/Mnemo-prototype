@@ -6,71 +6,41 @@ import { useParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import ReactionButtons from '@/components/ReactionButtons';
 import {
-  getFragments,
-  getResurfacingHistory,
-  saveResurfacing,
-} from '@/lib/storage';
-import { daysSince, getTriggerType } from '@/lib/resurfacing';
-import { formatLongDate, formatRelativeDays, getTriggerDays } from '@/lib/datetime';
-import type { Fragment, Resurface } from '@/lib/types';
+  loadResurfaceContext,
+  saveReaction,
+  type ResurfaceContext,
+} from '@/controllers/resurfacingController';
+import { getTriggerDays } from '@/models/resurfacing';
+import { formatLongDate, formatRelativeDays } from '@/lib/datetime';
 
 export default function ResurfaceDetailPage() {
   const { t, i18n } = useTranslation();
   const params = useParams<{ id: string }>();
   const id = params?.id;
+
   const [hydrated, setHydrated] = useState(false);
-  const [fragment, setFragment] = useState<Fragment | null>(null);
-  const [record, setRecord] = useState<Resurface | null>(null);
-  const [triggerType, setTriggerType] =
-    useState<Resurface['triggerType'] | null>(null);
+  const [context, setContext] = useState<ResurfaceContext | null>(null);
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect --
-       One-time load of fragment + resurface record on mount; per spec, the
-       record is also created here on first view. */
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (!id) return;
-
-    const fragments = getFragments();
-    const found = fragments.find((f) => f.id === id) ?? null;
-    setFragment(found);
-
-    if (!found) {
-      setHydrated(true);
-      return;
-    }
-
-    const history = getResurfacingHistory();
-    const existing = history.find((r) => r.fragmentId === id) ?? null;
-
-    if (existing) {
-      setRecord(existing);
-      setTriggerType(existing.triggerType);
-    } else {
-      const computed = getTriggerType(daysSince(found.createdAt));
-      if (computed) {
-        const fresh: Resurface = {
-          fragmentId: id,
-          shownAt: new Date().toISOString(),
-          reaction: null,
-          triggerType: computed,
-        };
-        saveResurfacing(fresh);
-        setRecord(fresh);
-        setTriggerType(computed);
-      }
-    }
-
+    setContext(loadResurfaceContext(id));
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [id]);
 
+  const handleReact = (reaction: 'still_true' | 'changed' | 'archived') => {
+    if (!context) return;
+    saveReaction(context.fragment.id, reaction);
+  };
+
   return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-6 pb-12">
+    <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
       <header className="mb-12">
         <Link
           href="/"
           aria-label={t('common.back')}
-          className="inline-flex items-center text-mnemo-ink"
+          className="inline-flex items-center text-mnemo-ink py-2"
         >
           <svg
             width="20"
@@ -88,50 +58,46 @@ export default function ResurfaceDetailPage() {
         </Link>
       </header>
 
-      {hydrated && !fragment && (
+      {hydrated && !context && (
         <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed">
           {t('resurface.missing')}
         </p>
       )}
 
-      {hydrated && fragment && triggerType && (
+      {hydrated && context && context.triggerType && (
         <article>
           <div className="font-dm-mono text-[11px] uppercase tracking-[0.18em] text-mnemo-gold mb-2">
-            {formatRelativeDays(triggerType, i18n.language)}
+            {formatRelativeDays(context.triggerType, i18n.language)}
           </div>
           <div className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary mb-10">
-            {formatLongDate(fragment.createdAt, i18n.language)}
+            {formatLongDate(context.fragment.createdAt, i18n.language)}
           </div>
 
           <div
             aria-hidden="true"
-            className="font-cormorant text-mnemo-border leading-none mb-2 select-none"
-            style={{ fontSize: '96px' }}
+            className="font-cormorant text-mnemo-border leading-none mb-2 select-none text-[96px]"
           >
             “
           </div>
-          <p
-            className="font-cormorant italic text-mnemo-ink leading-relaxed whitespace-pre-wrap"
-            style={{ fontSize: '19px' }}
-          >
-            {fragment.content}
+          <p className="font-cormorant italic text-mnemo-ink leading-relaxed whitespace-pre-wrap text-[19px]">
+            {context.fragment.content}
           </p>
 
           <hr className="border-0 border-t border-mnemo-border my-10" />
 
           <p className="font-dm-sans text-sm text-mnemo-ink-tertiary mb-10">
-            {t('resurface.explanation', { count: getTriggerDays(triggerType) })}
+            {t('resurface.explanation', { count: getTriggerDays(context.triggerType) })}
           </p>
 
           <ReactionButtons
-            fragmentId={fragment.id}
-            initialReaction={record?.reaction ?? null}
+            initialReaction={context.record?.reaction ?? null}
+            onReact={handleReact}
           />
 
           <div className="mt-12">
             <Link
               href="/archive"
-              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary"
+              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary py-2 inline-block"
             >
               {t('resurface.seeInArchive')}
             </Link>
@@ -139,14 +105,14 @@ export default function ResurfaceDetailPage() {
         </article>
       )}
 
-      {hydrated && fragment && !triggerType && (
+      {hydrated && context && !context.triggerType && (
         <div>
           <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed">
             {t('resurface.notDueYet')}
           </p>
           <Link
             href="/archive"
-            className="inline-block mt-6 font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary"
+            className="inline-block mt-6 font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary py-2"
           >
             {t('resurface.seeInArchive')}
           </Link>

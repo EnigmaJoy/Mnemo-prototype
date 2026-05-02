@@ -85,7 +85,7 @@ export default function RecordingSphere({ stream, size = 200 }: Props) {
         const dotR = 0.9 + depth * 1.7;
         const alpha = 0.18 + depth * 0.62;
 
-        ctx2d.fillStyle = `rgba(196, 163, 90, ${alpha.toFixed(3)})`;
+        ctx2d.fillStyle = `rgba(24, 22, 15, ${alpha.toFixed(3)})`;
         ctx2d.beginPath();
         ctx2d.arc(px, py, dotR, 0, Math.PI * 2);
         ctx2d.fill();

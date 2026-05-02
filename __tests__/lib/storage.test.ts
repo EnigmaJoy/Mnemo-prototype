@@ -1,4 +1,3 @@
-// __tests__/lib/storage.test.ts
 import {
   getFragments,
   saveFragment,
@@ -8,7 +7,8 @@ import {
   updateResurfacing,
   isStorageAvailable,
 } from '@/lib/storage';
-import type { Fragment, Resurface } from '@/lib/types';
+import type { Fragment } from '@/models/fragment';
+import type { Resurface } from '@/models/resurfacing';
 
 const makeFragment = (overrides: Partial<Fragment> = {}): Fragment => ({
   id: 'test-id-1',

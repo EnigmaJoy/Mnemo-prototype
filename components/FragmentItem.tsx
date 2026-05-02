@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatShortDate } from '@/lib/datetime';
 import { getAudioBlob } from '@/lib/audio/db';
-import type { Fragment } from '@/lib/types';
+import type { Fragment } from '@/models/fragment';
 
 interface Props {
   fragment: Fragment;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: string) => void | Promise<void>;
 }
 
 const LONG_PRESS_MS = 600;
@@ -20,12 +20,10 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
   const [confirming, setConfirming] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // suppresses the synthetic click that follows a completed long-press
   const longPressFired = useRef(false);
 
   const isAudio = fragment.type === 'audio';
 
-  // load the blob lazily when the user expands an audio fragment
   useEffect(() => {
     if (!isAudio || !expanded || !fragment.audioId) return;
     if (audioUrl) return;
@@ -36,8 +34,7 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
         setAudioUrl(URL.createObjectURL(blob));
       })
       .catch(() => {
-        // blob missing or storage error - UI just won't show a player
-        console.error("Blob missing file");
+        /* blob missing or storage error; player simply will not appear */
       });
     return () => {
       cancelled = true;
@@ -71,7 +68,7 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
       longPressFired.current = false;
       return;
     }
-    setExpanded(prev => !prev);
+    setExpanded((prev) => !prev);
   };
 
   if (confirming && onDelete) {
@@ -84,17 +81,17 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
           <button
             type="button"
             onClick={() => {
-              onDelete(fragment.id);
+              void onDelete(fragment.id);
               setConfirming(false);
             }}
-            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-ink text-mnemo-ink"
+            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-ink text-mnemo-ink"
           >
             {t('common.remove')}
           </button>
           <button
             type="button"
             onClick={() => setConfirming(false)}
-            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-2 border border-mnemo-border text-mnemo-ink-secondary"
+            className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-border text-mnemo-ink-secondary"
           >
             {t('common.cancel')}
           </button>
@@ -116,7 +113,7 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          setExpanded(prev => !prev);
+          setExpanded((prev) => !prev);
         }
       }}
       onTouchStart={startPress}
@@ -131,7 +128,7 @@ export default function FragmentItem({ fragment, onDelete }: Props) {
           {formatShortDate(fragment.createdAt, i18n.language)}
         </span>
         {isAudio && (
-          <span className="font-dm-mono text-[9px] uppercase tracking-[0.18em] text-mnemo-gold border border-mnemo-gold/40 rounded-full px-2 py-0.5 inline-flex items-center gap-1">
+          <span className="font-dm-mono text-[9px] uppercase tracking-[0.18em] text-mnemo-ink-secondary border border-mnemo-border rounded-full px-2 py-0.5 inline-flex items-center gap-1">
             <MicGlyph />
             {t('fragmentItem.audioBadge')}
           </span>
@@ -173,8 +170,7 @@ const MicGlyph = () => (
 );
 
 function firstNLines(content: string, n: number): string {
-  const lines = content.split('\n');
-  return lines.slice(0, n).join('\n');
+  return content.split('\n').slice(0, n).join('\n');
 }
 
 function hasMoreThanNLines(content: string, n: number): boolean {

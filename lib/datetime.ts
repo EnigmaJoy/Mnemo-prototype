@@ -1,20 +1,10 @@
-import type { Resurface } from './types';
-
-const TRIGGER_DAYS: Record<Resurface['triggerType'], number> = {
-  day_7: 7,
-  day_14: 14,
-  day_30: 30,
-};
-
-export function getTriggerDays(triggerType: Resurface['triggerType']): number {
-  return TRIGGER_DAYS[triggerType];
-}
+import { getTriggerDays, type Resurface } from '@/models/resurfacing';
 
 export function formatRelativeDays(
   triggerType: Resurface['triggerType'],
   locale: string,
 ): string {
-  const days = TRIGGER_DAYS[triggerType];
+  const days = getTriggerDays(triggerType);
   return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-days, 'day');
 }
 

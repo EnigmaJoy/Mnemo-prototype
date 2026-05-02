@@ -6,7 +6,8 @@ import en from './locales/en.json';
 import it from './locales/it.json';
 import de from './locales/de.json';
 import fr from './locales/fr.json';
-import zhCN from './locales/zh-CN.json';
+import es from './locales/es.json';
+import zh from './locales/zh.json';
 import { DEFAULT_LOCALE } from './config';
 
 if (!i18n.isInitialized) {
@@ -16,7 +17,8 @@ if (!i18n.isInitialized) {
       it: { translation: it },
       de: { translation: de },
       fr: { translation: fr },
-      'zh-CN': { translation: zhCN },
+      es: { translation: es },
+      zh: { translation: zh },
     },
     lng: DEFAULT_LOCALE,
     fallbackLng: DEFAULT_LOCALE,

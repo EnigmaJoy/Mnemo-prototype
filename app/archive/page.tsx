@@ -4,74 +4,40 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
 import FragmentItem from '@/components/FragmentItem';
-import { getFragments, deleteFragment } from '@/lib/storage';
-import { deleteAudioBlob } from '@/lib/audio/db';
+import {
+  deleteFragment,
+  exportFragmentsAsDownload,
+  getFragmentsGroupedByMonth,
+} from '@/controllers/fragmentController';
 import { formatMonthYear } from '@/lib/datetime';
-import type { Fragment } from '@/lib/types';
-
-function todayYMD(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+import type { MonthGroup } from '@/models/fragment';
 
 export default function ArchivePage() {
   const { t, i18n } = useTranslation();
   const [hydrated, setHydrated] = useState(false);
-  const [fragments, setFragments] = useState<Fragment[]>([]);
+  const [groups, setGroups] = useState<MonthGroup[]>([]);
 
-  const reload = () => {
-    const all = getFragments();
-    const sorted = [...all].sort(
-      (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)
-    );
-    setFragments(sorted);
+  const reloadGroups = () => {
+    setGroups(getFragmentsGroupedByMonth());
   };
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect --
-       One-time read from localStorage on mount. */
-    reload();
+    /* eslint-disable react-hooks/set-state-in-effect */
+    reloadGroups();
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  const handleDelete = (id: string) => {
-    const target = getFragments().find((f) => f.id === id);
-    if (target?.type === 'audio' && target.audioId) {
-      deleteAudioBlob(target.audioId).catch(() => {
-        // blob already gone or storage error - fragment metadata is the source of truth
-      });
-    }
-    deleteFragment(id);
-    reload();
+  const handleDelete = async (id: string) => {
+    await deleteFragment(id);
+    reloadGroups();
   };
 
   const handleExport = () => {
-    const data = JSON.stringify(getFragments(), null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `mnemo-export-${todayYMD()}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    exportFragmentsAsDownload();
   };
 
-  // Group by year-month, preserving Map insertion order (already reverse-chrono)
-  const groups = new Map<string, { label: string; items: Fragment[] }>();
-  for (const f of fragments) {
-    const d = new Date(f.createdAt);
-    const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
-    if (!groups.has(key)) {
-      groups.set(key, { label: formatMonthYear(d, i18n.language), items: [] });
-    }
-    groups.get(key)!.items.push(f);
-  }
+  const totalFragments = groups.reduce((sum, group) => sum + group.items.length, 0);
 
   return (
     <>
@@ -80,35 +46,35 @@ export default function ArchivePage() {
           <h1 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink">
             {t('archive.title')}
           </h1>
-          {/*{fragments.length > 0 && (
+          {totalFragments > 0 && (
             <button
               type="button"
               onClick={handleExport}
-              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink"
+              className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink py-2 px-1"
             >
               {t('common.export')}
             </button>
-          )}*/}
+          )}
         </header>
 
-        {hydrated && fragments.length === 0 && (
+        {hydrated && totalFragments === 0 && (
           <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
             {t('archive.empty')}
           </p>
         )}
 
-        {hydrated && fragments.length > 0 && (
+        {hydrated && totalFragments > 0 && (
           <div>
-            {Array.from(groups.entries()).map(([key, { label, items }]) => (
-              <section key={key} className="mb-10">
+            {groups.map((group) => (
+              <section key={group.key} className="mb-10">
                 <h2 className="font-dm-mono text-[11px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-2">
-                  {label}
+                  {formatMonthYear(group.monthDate, i18n.language)}
                 </h2>
                 <div>
-                  {items.map((f) => (
+                  {group.items.map((fragment) => (
                     <FragmentItem
-                      key={f.id}
-                      fragment={f}
+                      key={fragment.id}
+                      fragment={fragment}
                       onDelete={handleDelete}
                     />
                   ))}

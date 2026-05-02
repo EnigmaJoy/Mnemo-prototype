@@ -71,6 +71,7 @@ const WHISPER_LANGUAGE: Record<string, string> = {
   it: 'italian',
   de: 'german',
   fr: 'french',
+  es: 'spanish',
   zh: 'chinese',
 };
 

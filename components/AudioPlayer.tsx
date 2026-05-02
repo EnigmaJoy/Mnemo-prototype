@@ -44,8 +44,7 @@ export default function AudioPlayer({ blob }: Props) {
         setDuration(buf.duration);
         setReady(true);
       } catch {
-        // decoding failed - leave UI in not-ready state
-        console.error('decoding failed');
+        /* decoding failed; player remains in disabled state */
       }
     })();
     return () => {
@@ -141,7 +140,7 @@ export default function AudioPlayer({ blob }: Props) {
         onClick={toggle}
         disabled={!ready}
         aria-label={t('fragmentItem.playAria')}
-        className="w-9 h-9 rounded-full bg-mnemo-ink text-mnemo-bg flex items-center justify-center disabled:opacity-50 shrink-0"
+        className="w-11 h-11 rounded-full bg-mnemo-ink text-mnemo-bg flex items-center justify-center disabled:opacity-50 shrink-0"
       >
         {isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
@@ -153,7 +152,7 @@ export default function AudioPlayer({ blob }: Props) {
         aria-valuenow={Math.round(currentTime)}
         tabIndex={0}
         onClick={seek}
-        className="flex-1 h-2 flex items-center cursor-pointer"
+        className="flex-1 h-11 flex items-center cursor-pointer"
       >
         <div className="w-full h-px bg-mnemo-border">
           <div

@@ -1,8 +1,10 @@
-// __tests__/lib/resurfacing.test.ts
-import { selectResurfacingCandidate, daysSince } from '@/lib/resurfacing';
-import type { Fragment, Resurface } from '@/lib/types';
+import {
+  selectResurfacingCandidate,
+  daysSince,
+  type Resurface,
+} from '@/models/resurfacing';
+import type { Fragment } from '@/models/fragment';
 
-// Helper to build a fragment created N days ago
 const fragmentDaysAgo = (days: number, id = 'frag-1'): Fragment => {
   const d = new Date();
   d.setDate(d.getDate() - days);
