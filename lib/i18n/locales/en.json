@@ -80,7 +80,12 @@
     "unsaved": {
       "title": "Unsaved fragment",
       "message": "You haven't saved this fragment yet. Save it, or start a new one?",
-      "writeNew": "Write new"
+      "writeNew": "Write new",
+      "discard": "Discard"
+    },
+    "unsavedAudio": {
+      "title": "Transcribe and save first",
+      "message": "Transcribe this recording and save it before starting a new fragment. Or discard it and begin again."
     },
     "record": {
       "notSupported": "Audio recording isn't supported in this browser.",

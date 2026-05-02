@@ -106,7 +106,7 @@ export default function CapturePage() {
     setShowUnsavedModal(false);
     if (mode === 'text' && content.trim().length > 0) {
       await saveTextFragment(content);
-    } else if (recordedBlob && transcript.trim().length > 0) {
+    } else if (mode === 'audio' && recordedBlob && transcript.trim().length > 0) {
       await saveAudioFragment(transcript, recordedBlob);
     }
     resetAll();
@@ -224,6 +224,9 @@ export default function CapturePage() {
     : mode === 'text'
       ? content.trim().length > 0
       : recState === 'edit' && transcript.trim().length > 0;
+
+  const isAudioPendingTranscript =
+    mode === 'audio' && recordedBlob !== null && transcript.trim().length === 0;
 
   return (
     <>
@@ -374,10 +377,14 @@ export default function CapturePage() {
               id="unsaved-title"
               className="font-cormorant text-xl text-mnemo-ink mb-3"
             >
-              {t('capture.unsaved.title')}
+              {isAudioPendingTranscript
+                ? t('capture.unsavedAudio.title')
+                : t('capture.unsaved.title')}
             </h2>
             <p className="font-dm-sans text-sm text-mnemo-ink-secondary mb-6">
-              {t('capture.unsaved.message')}
+              {isAudioPendingTranscript
+                ? t('capture.unsavedAudio.message')
+                : t('capture.unsaved.message')}
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -385,16 +392,28 @@ export default function CapturePage() {
                 onClick={handleDiscardAndNew}
                 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-border text-mnemo-ink-secondary"
               >
-                {t('capture.unsaved.writeNew')}
+                {isAudioPendingTranscript
+                  ? t('capture.unsaved.discard')
+                  : t('capture.unsaved.writeNew')}
               </button>
-              <button
-                type="button"
-                onClick={handleSaveAndNew}
-                disabled={!canSave}
-                className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-ink text-mnemo-ink disabled:opacity-50"
-              >
-                {t('common.save')}
-              </button>
+              {isAudioPendingTranscript ? (
+                <button
+                  type="button"
+                  onClick={() => setShowUnsavedModal(false)}
+                  className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-ink text-mnemo-ink"
+                >
+                  {t('common.cancel')}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSaveAndNew}
+                  disabled={!canSave}
+                  className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-ink text-mnemo-ink disabled:opacity-50"
+                >
+                  {t('common.save')}
+                </button>
+              )}
             </div>
           </div>
         </div>

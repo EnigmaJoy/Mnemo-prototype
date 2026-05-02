@@ -80,7 +80,12 @@
     "unsaved": {
       "title": "未保存的片段",
       "message": "你还没有保存这个片段。要保存还是写一个新的？",
-      "writeNew": "写一个新的"
+      "writeNew": "写一个新的",
+      "discard": "放弃"
+    },
+    "unsavedAudio": {
+      "title": "请先转录并保存",
+      "message": "在开始新的片段之前，请先转录这段录音并保存。或者放弃并重新开始。"
     },
     "record": {
       "notSupported": "此浏览器不支持音频录制。",

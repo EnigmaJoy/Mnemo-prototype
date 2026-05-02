@@ -80,7 +80,12 @@
     "unsaved": {
       "title": "Frammento non salvato",
       "message": "Non hai ancora salvato questo frammento. Vuoi salvarlo o scriverne uno nuovo?",
-      "writeNew": "Scrivi nuovo"
+      "writeNew": "Scrivi nuovo",
+      "discard": "Scarta"
+    },
+    "unsavedAudio": {
+      "title": "Trascrivi e salva prima",
+      "message": "Trascrivi questa registrazione e salvala prima di iniziare un nuovo frammento. Oppure scartala e riparti da zero."
     },
     "record": {
       "notSupported": "La registrazione audio non è supportata su questo browser.",

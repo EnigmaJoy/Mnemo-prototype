@@ -80,7 +80,12 @@
     "unsaved": {
       "title": "Fragment non enregistré",
       "message": "Tu n'as pas encore enregistré ce fragment. L'enregistrer ou en écrire un nouveau ?",
-      "writeNew": "Écrire un nouveau"
+      "writeNew": "Écrire un nouveau",
+      "discard": "Jeter"
+    },
+    "unsavedAudio": {
+      "title": "Transcris et enregistre d'abord",
+      "message": "Transcris cet enregistrement et sauvegarde-le avant d'en commencer un nouveau. Ou jette-le et recommence."
     },
     "record": {
       "notSupported": "L'enregistrement audio n'est pas pris en charge dans ce navigateur.",

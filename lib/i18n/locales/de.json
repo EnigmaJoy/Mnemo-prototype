@@ -80,7 +80,12 @@
     "unsaved": {
       "title": "Ungespeichertes Fragment",
       "message": "Du hast dieses Fragment noch nicht gespeichert. Speichern oder ein neues schreiben?",
-      "writeNew": "Neues schreiben"
+      "writeNew": "Neues schreiben",
+      "discard": "Verwerfen"
+    },
+    "unsavedAudio": {
+      "title": "Erst transkribieren und speichern",
+      "message": "Transkribiere diese Aufnahme und speichere sie, bevor du ein neues Fragment beginnst. Oder verwirf sie und fang neu an."
     },
     "record": {
       "notSupported": "Audioaufnahme wird in diesem Browser nicht unterstützt.",

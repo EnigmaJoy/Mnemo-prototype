@@ -80,7 +80,12 @@
     "unsaved": {
       "title": "Fragmento sin guardar",
       "message": "Aún no has guardado este fragmento. ¿Lo guardas o escribes uno nuevo?",
-      "writeNew": "Escribir nuevo"
+      "writeNew": "Escribir nuevo",
+      "discard": "Descartar"
+    },
+    "unsavedAudio": {
+      "title": "Transcribe y guarda primero",
+      "message": "Transcribe esta grabación y guárdala antes de empezar un fragmento nuevo. O descártala y vuelve a empezar."
     },
     "record": {
       "notSupported": "La grabación de audio no es compatible con este navegador.",
