@@ -64,6 +64,97 @@ export function groupFragmentsByMonth(fragments: Fragment[]): MonthGroup[] {
   return Array.from(groups.values());
 }
 
+export interface DayGroup {
+  dayDate: Date;
+  items: Fragment[];
+}
+
+export interface WeekGroup {
+  weekStart: Date;
+  weekEnd: Date;
+  days: DayGroup[];
+}
+
+export interface MonthBreakdown {
+  monthDate: Date;
+  weeks: WeekGroup[];
+}
+
+export interface YearBreakdown {
+  year: number;
+  months: MonthBreakdown[];
+}
+
+function startOfDay(d: Date): Date {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function startOfMondayWeek(d: Date): Date {
+  const day = startOfDay(d);
+  const weekday = day.getDay();
+  const offsetToMonday = weekday === 0 ? -6 : 1 - weekday;
+  day.setDate(day.getDate() + offsetToMonday);
+  return day;
+}
+
+export function groupFragmentsForPrint(fragments: Fragment[]): YearBreakdown[] {
+  const years = new Map<number, Map<number, Map<number, Map<number, Fragment[]>>>>();
+
+  for (const fragment of sortFragmentsNewestFirst(fragments)) {
+    const created = new Date(fragment.createdAt);
+    const year = created.getFullYear();
+    const month = created.getMonth();
+    const weekStart = startOfMondayWeek(created).getTime();
+    const day = startOfDay(created).getTime();
+
+    let yearMap = years.get(year);
+    if (!yearMap) {
+      yearMap = new Map();
+      years.set(year, yearMap);
+    }
+
+    let monthMap = yearMap.get(month);
+    if (!monthMap) {
+      monthMap = new Map();
+      yearMap.set(month, monthMap);
+    }
+
+    let weekMap = monthMap.get(weekStart);
+    if (!weekMap) {
+      weekMap = new Map();
+      monthMap.set(weekStart, weekMap);
+    }
+
+    let dayItems = weekMap.get(day);
+    if (!dayItems) {
+      dayItems = [];
+      weekMap.set(day, dayItems);
+    }
+
+    dayItems.push(fragment);
+  }
+
+  return Array.from(years.entries()).map(([year, monthMap]) => ({
+    year,
+    months: Array.from(monthMap.entries()).map(([month, weekMap]) => ({
+      monthDate: new Date(year, month, 1),
+      weeks: Array.from(weekMap.entries()).map(([weekStartMs, dayMap]) => {
+        const weekStart = new Date(weekStartMs);
+        const weekEnd = new Date(weekStartMs);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        return {
+          weekStart,
+          weekEnd,
+          days: Array.from(dayMap.entries()).map(([dayMs, items]) => ({
+            dayDate: new Date(dayMs),
+            items,
+          })),
+        };
+      }),
+    })),
+  }));
+}
+
 const STOP_WORDS = new Set([
   'i', 'the', 'a', 'is', 'in', 'and', 'to', 'of', 'it',
   'that', 'this', 'for', 'on', 'with', 'was', 'but',

@@ -4,49 +4,50 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
 import FragmentItem from '@/components/FragmentItem';
+import ArchivePrintView from '@/components/ArchivePrintView';
 import {
   deleteFragment,
-  exportFragmentsAsDownload,
+  getAllFragments,
   getFragmentsGroupedByMonth,
 } from '@/controllers/fragmentController';
 import { formatMonthYear } from '@/lib/datetime';
-import type { MonthGroup } from '@/models/fragment';
+import type { Fragment, MonthGroup } from '@/models/fragment';
 
 export default function ArchivePage() {
   const { t, i18n } = useTranslation();
   const [hydrated, setHydrated] = useState(false);
   const [groups, setGroups] = useState<MonthGroup[]>([]);
+  const [fragments, setFragments] = useState<Fragment[]>([]);
 
-  const reloadGroups = () => {
+  const reloadFragments = () => {
     setGroups(getFragmentsGroupedByMonth());
+    setFragments(getAllFragments());
   };
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
-    reloadGroups();
+    reloadFragments();
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const handleDelete = async (id: string) => {
     await deleteFragment(id);
-    reloadGroups();
+    reloadFragments();
   };
 
   const handleExport = () => {
-    exportFragmentsAsDownload();
+    window.print();
   };
-
-  const totalFragments = groups.reduce((sum, group) => sum + group.items.length, 0);
 
   return (
     <>
-      <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
+      <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24 print:hidden">
         <header className="flex items-center justify-between mb-10">
           <h1 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink">
             {t('archive.title')}
           </h1>
-          {totalFragments > 0 && (
+          {fragments.length > 0 && (
             <button
               type="button"
               onClick={handleExport}
@@ -57,13 +58,13 @@ export default function ArchivePage() {
           )}
         </header>
 
-        {hydrated && totalFragments === 0 && (
+        {hydrated && fragments.length === 0 && (
           <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
             {t('archive.empty')}
           </p>
         )}
 
-        {hydrated && totalFragments > 0 && (
+        {hydrated && fragments.length > 0 && (
           <div>
             {groups.map((group) => (
               <section key={group.key} className="mb-10">
@@ -84,7 +85,12 @@ export default function ArchivePage() {
           </div>
         )}
       </main>
-      <BottomNav />
+      <div className="print:hidden">
+        <BottomNav />
+      </div>
+      {hydrated && fragments.length > 0 && (
+        <ArchivePrintView fragments={fragments} exportedAt={new Date()} />
+      )}
     </>
   );
 }

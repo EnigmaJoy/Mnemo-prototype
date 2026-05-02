@@ -95,29 +95,3 @@ export async function deleteFragment(id: string): Promise<void> {
   deleteResurfacingByFragmentId(id);
 }
 
-export function exportFragmentsAsDownload(now: Date = new Date()): void {
-  const fragments = readFragments();
-  const filename = `mnemo-export-${formatExportDate(now)}.json`;
-  const blob = new Blob([JSON.stringify(fragments, null, 2)], {
-    type: 'application/json',
-  });
-  triggerDownload(blob, filename);
-}
-
-function formatExportDate(now: Date): string {
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function triggerDownload(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = filename;
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-  URL.revokeObjectURL(url);
-}

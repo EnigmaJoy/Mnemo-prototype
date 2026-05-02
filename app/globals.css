@@ -53,3 +53,55 @@ body {
   color: #18160f;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ─── Print styles (Archive export) ───────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #18160f !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-archive {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .print-header {
+    border-bottom: 1px solid #ddd6c5;
+    padding-bottom: 12mm;
+    margin-bottom: 8mm;
+  }
+
+  .print-year {
+    page-break-before: auto;
+  }
+
+  .print-year + .print-year {
+    page-break-before: always;
+  }
+
+  .print-month,
+  .print-week,
+  .print-day,
+  .print-fragment {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .print-footer {
+    margin-top: 16mm;
+    padding-top: 8mm;
+    border-top: 1px solid #ddd6c5;
+    display: flex;
+    justify-content: center;
+  }
+}
