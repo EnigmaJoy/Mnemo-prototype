@@ -77,6 +77,11 @@
       "write": "Écrire",
       "record": "Enregistrer"
     },
+    "unsaved": {
+      "title": "Fragment non enregistré",
+      "message": "Tu n'as pas encore enregistré ce fragment. L'enregistrer ou en écrire un nouveau ?",
+      "writeNew": "Écrire un nouveau"
+    },
     "record": {
       "notSupported": "L'enregistrement audio n'est pas pris en charge dans ce navigateur.",
       "permissionDenied": "Accès au microphone refusé.",

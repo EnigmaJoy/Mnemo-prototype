@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { AudioRecorder, isAudioRecordingSupported } from '@/lib/audio/recorder';
 import RecordPanel, { MAX_RECORD_SECONDS, type RecState } from '@/components/RecordPanel';
+import BottomNav from '@/components/BottomNav';
 import {
   saveAudioFragment,
   saveTextFragment,
@@ -25,6 +25,7 @@ export default function CapturePage() {
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recorderRef = useRef<AudioRecorder | null>(null);
+  const redirectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [mode, setMode] = useState<Mode>('text');
   const [content, setContent] = useState('');
@@ -32,6 +33,7 @@ export default function CapturePage() {
   const [contextNow, setContextNow] = useState<Date | null>(null);
   const [placeholderOverride, setPlaceholderOverride] = useState<string | null>(null);
   const [audioSupported, setAudioSupported] = useState(true);
+  const [showUnsavedModal, setShowUnsavedModal] = useState(false);
 
   const [recState, setRecState] = useState<RecState>('idle');
   const [recError, setRecError] = useState<string | null>(null);
@@ -50,7 +52,20 @@ export default function CapturePage() {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
-  const resetAudio = () => {
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+    };
+  }, []);
+
+  const cancelRedirect = () => {
+    if (redirectTimeoutRef.current) {
+      clearTimeout(redirectTimeoutRef.current);
+      redirectTimeoutRef.current = null;
+    }
+  };
+
+  const resetAudioOnly = () => {
     if (recorderRef.current) {
       recorderRef.current.cancel();
     }
@@ -63,9 +78,48 @@ export default function CapturePage() {
     setMicStream(null);
   };
 
+  const resetAll = () => {
+    cancelRedirect();
+    setContent('');
+    setSaved(false);
+    setMode('text');
+    setPlaceholderOverride(null);
+    resetAudioOnly();
+    setTimeout(() => textareaRef.current?.focus(), 0);
+  };
+
+  const hasUnsavedDraft = (): boolean => {
+    if (saved) return false;
+    if (mode === 'text') return content.trim().length > 0;
+    return recordedBlob !== null || transcript.trim().length > 0;
+  };
+
+  const handleNewFragment = () => {
+    if (!hasUnsavedDraft()) {
+      resetAll();
+      return;
+    }
+    setShowUnsavedModal(true);
+  };
+
+  const handleSaveAndNew = async () => {
+    setShowUnsavedModal(false);
+    if (mode === 'text' && content.trim().length > 0) {
+      await saveTextFragment(content);
+    } else if (recordedBlob && transcript.trim().length > 0) {
+      await saveAudioFragment(transcript, recordedBlob);
+    }
+    resetAll();
+  };
+
+  const handleDiscardAndNew = () => {
+    setShowUnsavedModal(false);
+    resetAll();
+  };
+
   const handleTabChange = (next: Mode) => {
     if (next === mode) return;
-    if (mode === 'audio') resetAudio();
+    if (mode === 'audio') resetAudioOnly();
     setMode(next);
   };
 
@@ -142,7 +196,7 @@ export default function CapturePage() {
     if (content.trim().length === 0 || saved) return;
     await saveTextFragment(content);
     setSaved(true);
-    setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
+    redirectTimeoutRef.current = setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
   };
 
   const handleSaveAudio = async () => {
@@ -154,7 +208,7 @@ export default function CapturePage() {
       return;
     }
     setSaved(true);
-    setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
+    redirectTimeoutRef.current = setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
   };
 
   const handleSave = () => {
@@ -172,133 +226,179 @@ export default function CapturePage() {
       : recState === 'edit' && transcript.trim().length > 0;
 
   return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
-      <header className="flex items-center justify-between mb-6">
-        <Link
-          href="/"
-          aria-label={t('common.back')}
-          className="flex items-center gap-2 text-mnemo-ink py-2"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-          <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em]">
-            {t('capture.title')}
-          </span>
-        </Link>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={!canSave}
-          className={`font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors py-2 px-1 ${
-            canSave
-              ? 'text-mnemo-ink'
-              : 'text-mnemo-ink-tertiary cursor-not-allowed'
-          }`}
-        >
-          {t('common.save')}
-        </button>
-      </header>
-
-      {!saved && (
-        <div role="tablist" aria-label={t('capture.tabsAria')} className="flex border-b border-mnemo-border mb-6">
+    <>
+      <main className="flex-1 w-full max-w-3xl mx-auto px-6 pt-8 pb-24">
+        <header className="flex items-center justify-between mb-6">
           <button
-            role="tab"
             type="button"
-            aria-selected={mode === 'text'}
-            onClick={() => handleTabChange('text')}
-            className={`flex-1 py-3 font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
-              mode === 'text'
-                ? 'text-mnemo-ink border-b-2 border-mnemo-ink -mb-px'
-                : 'text-mnemo-ink-tertiary'
-            }`}
+            onClick={handleNewFragment}
+            className="flex items-center gap-2 text-mnemo-ink py-2"
           >
-            {t('capture.tabs.write')}
-          </button>
-          <button
-            role="tab"
-            type="button"
-            aria-selected={mode === 'audio'}
-            onClick={() => handleTabChange('audio')}
-            disabled={!audioSupported}
-            className={`flex-1 py-3 font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
-              mode === 'audio'
-                ? 'text-mnemo-ink border-b-2 border-mnemo-ink -mb-px'
-                : audioSupported
-                  ? 'text-mnemo-ink-tertiary'
-                  : 'text-mnemo-ink-tertiary opacity-50 cursor-not-allowed'
-            }`}
-          >
-            {t('capture.tabs.record')}
-          </button>
-        </div>
-      )}
-
-      {saved ? (
-        <p className="font-cormorant italic text-2xl text-mnemo-ink leading-relaxed mt-12">
-          {t('capture.saved')}
-        </p>
-      ) : mode === 'text' ? (
-        <>
-          <div className="border-b border-mnemo-border focus-within:border-mnemo-ink transition-colors mb-2">
-            <textarea
-              ref={textareaRef}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              maxLength={MAX_CHARS}
-              placeholder={placeholderOverride ?? t('capture.placeholder')}
-              rows={6}
-              className="w-full bg-transparent border-0 outline-none resize-none font-cormorant italic text-[18px] leading-relaxed text-mnemo-ink placeholder:text-mnemo-ink-tertiary py-2 min-h-40"
-            />
-          </div>
-          <div className="flex justify-end mb-8">
-            <span
-              className={`font-dm-mono text-[10px] tabular-nums ${
-                counterRed ? 'text-red-600' : 'text-mnemo-ink-tertiary'
-              }`}
-              aria-live="polite"
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
             >
-              {remaining}
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em]">
+              {t('capture.title')}
             </span>
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!canSave}
+            className={`font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors py-2 px-1 ${
+              canSave
+                ? 'text-mnemo-ink'
+                : 'text-mnemo-ink-tertiary cursor-not-allowed'
+            }`}
+          >
+            {t('common.save')}
+          </button>
+        </header>
+
+        {!saved && (
+          <div role="tablist" aria-label={t('capture.tabsAria')} className="flex border-b border-mnemo-border mb-6">
+            <button
+              role="tab"
+              type="button"
+              aria-selected={mode === 'text'}
+              onClick={() => handleTabChange('text')}
+              className={`flex-1 py-3 font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                mode === 'text'
+                  ? 'text-mnemo-ink border-b-2 border-mnemo-ink -mb-px'
+                  : 'text-mnemo-ink-tertiary'
+              }`}
+            >
+              {t('capture.tabs.write')}
+            </button>
+            <button
+              role="tab"
+              type="button"
+              aria-selected={mode === 'audio'}
+              onClick={() => handleTabChange('audio')}
+              disabled={!audioSupported}
+              className={`flex-1 py-3 font-dm-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                mode === 'audio'
+                  ? 'text-mnemo-ink border-b-2 border-mnemo-ink -mb-px'
+                  : audioSupported
+                    ? 'text-mnemo-ink-tertiary'
+                    : 'text-mnemo-ink-tertiary opacity-50 cursor-not-allowed'
+              }`}
+            >
+              {t('capture.tabs.record')}
+            </button>
           </div>
-          {contextNow && (
-            <div className="border-t border-mnemo-border pt-5 flex flex-wrap gap-2">
-              <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
-                {formatShortDate(contextNow.toISOString(), i18n.language)}
-              </span>
-              <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
-                {t(getTimeOfDayKey(contextNow.getHours()))}
+        )}
+
+        {saved ? (
+          <p className="font-cormorant italic text-2xl text-mnemo-ink leading-relaxed mt-12">
+            {t('capture.saved')}
+          </p>
+        ) : mode === 'text' ? (
+          <>
+            <div className="border-b border-mnemo-border focus-within:border-mnemo-ink transition-colors mb-2">
+              <textarea
+                ref={textareaRef}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                maxLength={MAX_CHARS}
+                placeholder={placeholderOverride ?? t('capture.placeholder')}
+                rows={6}
+                className="w-full bg-transparent border-0 outline-none resize-none font-cormorant italic text-[18px] leading-relaxed text-mnemo-ink placeholder:text-mnemo-ink-tertiary py-2 min-h-40"
+              />
+            </div>
+            <div className="flex justify-end mb-8">
+              <span
+                className={`font-dm-mono text-[10px] tabular-nums ${
+                  counterRed ? 'text-red-600' : 'text-mnemo-ink-tertiary'
+                }`}
+                aria-live="polite"
+              >
+                {remaining}
               </span>
             </div>
-          )}
-        </>
-      ) : (
-        <RecordPanel
-          recState={recState}
-          recError={recError}
-          recordedBlob={recordedBlob}
-          seconds={seconds}
-          transcript={transcript}
-          onTranscriptChange={setTranscript}
-          modelProgress={modelProgress}
-          audioSupported={audioSupported}
-          micStream={micStream}
-          onStart={handleStartRecord}
-          onStop={handleStopRecord}
-          onRerecord={resetAudio}
-          onTranscribe={handleTranscribe}
-        />
+            {contextNow && (
+              <div className="border-t border-mnemo-border pt-5 flex flex-wrap gap-2">
+                <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
+                  {formatShortDate(contextNow.toISOString(), i18n.language)}
+                </span>
+                <span className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-tertiary border border-mnemo-border rounded-full px-3 py-1">
+                  {t(getTimeOfDayKey(contextNow.getHours()))}
+                </span>
+              </div>
+            )}
+          </>
+        ) : (
+          <RecordPanel
+            recState={recState}
+            recError={recError}
+            recordedBlob={recordedBlob}
+            seconds={seconds}
+            transcript={transcript}
+            onTranscriptChange={setTranscript}
+            modelProgress={modelProgress}
+            audioSupported={audioSupported}
+            micStream={micStream}
+            onStart={handleStartRecord}
+            onStop={handleStopRecord}
+            onRerecord={resetAudioOnly}
+            onTranscribe={handleTranscribe}
+          />
+        )}
+      </main>
+
+      <BottomNav />
+
+      {showUnsavedModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="unsaved-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/40"
+          onClick={() => setShowUnsavedModal(false)}
+        >
+          <div
+            className="bg-mnemo-bg border border-mnemo-border rounded-lg p-6 max-w-sm w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2
+              id="unsaved-title"
+              className="font-cormorant text-xl text-mnemo-ink mb-3"
+            >
+              {t('capture.unsaved.title')}
+            </h2>
+            <p className="font-dm-sans text-sm text-mnemo-ink-secondary mb-6">
+              {t('capture.unsaved.message')}
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={handleDiscardAndNew}
+                className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-border text-mnemo-ink-secondary"
+              >
+                {t('capture.unsaved.writeNew')}
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAndNew}
+                disabled={!canSave}
+                className="font-dm-mono text-[10px] uppercase tracking-[0.18em] px-4 py-3 min-h-11 border border-mnemo-ink text-mnemo-ink disabled:opacity-50"
+              >
+                {t('common.save')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-    </main>
+    </>
   );
 }

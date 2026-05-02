@@ -77,6 +77,11 @@
       "write": "Schreiben",
       "record": "Aufnehmen"
     },
+    "unsaved": {
+      "title": "Ungespeichertes Fragment",
+      "message": "Du hast dieses Fragment noch nicht gespeichert. Speichern oder ein neues schreiben?",
+      "writeNew": "Neues schreiben"
+    },
     "record": {
       "notSupported": "Audioaufnahme wird in diesem Browser nicht unterstützt.",
       "permissionDenied": "Mikrofonzugriff verweigert.",

@@ -77,6 +77,11 @@
       "write": "Escribir",
       "record": "Grabar"
     },
+    "unsaved": {
+      "title": "Fragmento sin guardar",
+      "message": "Aún no has guardado este fragmento. ¿Lo guardas o escribes uno nuevo?",
+      "writeNew": "Escribir nuevo"
+    },
     "record": {
       "notSupported": "La grabación de audio no es compatible con este navegador.",
       "permissionDenied": "Acceso al micrófono denegado.",

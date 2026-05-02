@@ -77,6 +77,11 @@
       "write": "Write",
       "record": "Record"
     },
+    "unsaved": {
+      "title": "Unsaved fragment",
+      "message": "You haven't saved this fragment yet. Save it, or start a new one?",
+      "writeNew": "Write new"
+    },
     "record": {
       "notSupported": "Audio recording isn't supported in this browser.",
       "permissionDenied": "Microphone access denied.",

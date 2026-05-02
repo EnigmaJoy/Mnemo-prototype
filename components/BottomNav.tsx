@@ -72,7 +72,7 @@ const UserIcon = () => (
 
 const NAV_ITEMS = [
   { href: '/',        labelKey: 'nav.home',    Icon: HouseIcon },
-  { href: '/capture', labelKey: 'nav.capture', Icon: PlusCircleIcon },
+  /*{ href: '/capture', labelKey: 'nav.capture', Icon: PlusCircleIcon },*/
   { href: '/archive', labelKey: 'nav.archive', Icon: ListIcon },
   { href: '/profile', labelKey: 'nav.profile', Icon: UserIcon },
 ] as const;

@@ -77,6 +77,11 @@
       "write": "Scrivi",
       "record": "Registra"
     },
+    "unsaved": {
+      "title": "Frammento non salvato",
+      "message": "Non hai ancora salvato questo frammento. Vuoi salvarlo o scriverne uno nuovo?",
+      "writeNew": "Scrivi nuovo"
+    },
     "record": {
       "notSupported": "La registrazione audio non è supportata su questo browser.",
       "permissionDenied": "Accesso al microfono negato.",

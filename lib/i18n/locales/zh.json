@@ -77,6 +77,11 @@
       "write": "书写",
       "record": "录音"
     },
+    "unsaved": {
+      "title": "未保存的片段",
+      "message": "你还没有保存这个片段。要保存还是写一个新的？",
+      "writeNew": "写一个新的"
+    },
     "record": {
       "notSupported": "此浏览器不支持音频录制。",
       "permissionDenied": "麦克风访问被拒绝。",
