@@ -5,15 +5,19 @@ const FRAGMENTS_KEY   = 'mnemo_fragments';
 const RESURFACING_KEY = 'mnemo_resurfacing';
 const DISMISSED_KEY   = 'mnemo_dismissed';
 
+let cachedAvailability: boolean | null = null;
+
 export function isStorageAvailable(): boolean {
+  if (cachedAvailability !== null) return cachedAvailability;
   try {
     const probe = '__mnemo_test__';
     localStorage.setItem(probe, probe);
     localStorage.removeItem(probe);
-    return true;
+    cachedAvailability = true;
   } catch {
-    return false;
+    cachedAvailability = false;
   }
+  return cachedAvailability;
 }
 
 function readJSON<T>(key: string): T[] {
