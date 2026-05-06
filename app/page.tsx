@@ -10,6 +10,7 @@ import FragmentItem from '@/components/FragmentItem';
 import ResurfaceBanner from '@/components/ResurfaceBanner';
 import SentimentGrid from '@/components/SentimentGrid';
 import PaletteOnboardingModal from '@/components/PaletteOnboardingModal';
+import PushPermissionPrompt from '@/components/PushPermissionPrompt';
 import {
   DEFAULT_PALETTE,
   getPalette,
@@ -126,6 +127,8 @@ export default function HomePage() {
         </header>
 
         {hydrated && <SentimentGrid fragments={allFragments} palette={palette} />}
+
+        {hydrated && <PushPermissionPrompt />}
 
         {hydrated && !storageOk && (
           <div className="bg-mnemo-surface border border-mnemo-border rounded-lg p-4 mb-6 text-sm font-dm-sans text-mnemo-ink-secondary">

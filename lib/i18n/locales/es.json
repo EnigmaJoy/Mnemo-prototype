@@ -136,6 +136,37 @@
     "editPalette": "Editar paleta",
     "signOut": "Cerrar sesión"
   },
+  "push": {
+    "prompt": {
+      "label": "Notificaciones",
+      "body": "Deja que Mnemo te avise cuando un fragmento esté listo para volver. Puedes cambiarlo cuando quieras desde el Perfil.",
+      "enable": "Activar",
+      "enabling": "Activando…",
+      "notNow": "Ahora no",
+      "denied": "Las notificaciones se bloquearon. Actívalas en los ajustes del navegador para recibir recordatorios.",
+      "error": "No se pudieron activar las notificaciones. Vuelve a intentarlo."
+    },
+    "prefs": {
+      "title": "Notificaciones",
+      "unsupported": "Este dispositivo o navegador no admite notificaciones push. En iPhone, instala Mnemo en la pantalla de inicio.",
+      "deniedHint": "Las notificaciones están bloqueadas. Actívalas en los ajustes del navegador y vuelve aquí.",
+      "master": "Notificaciones push",
+      "masterHint": "Recibe las notificaciones de Mnemo en este dispositivo.",
+      "nudge": "Recordatorios suaves",
+      "nudgeHint": "Un toque amable cuando llevas tiempo sin escribir.",
+      "nudgeHour": "Hora del día",
+      "nudgeDays": "Después de",
+      "dayOne": "{{count}} día",
+      "dayMany": "{{count}} días",
+      "anniversary": "Aniversarios",
+      "anniversaryHint": "Marca los años desde que estás en Mnemo.",
+      "resurfacing": "Reaparición",
+      "resurfacingHint": "Recibe un push cuando un fragmento antiguo vuelva - incluso si la app está cerrada.",
+      "permissionRequired": "Se necesita permiso para enviar notificaciones.",
+      "errorSave": "No se pudo guardar. Inténtalo de nuevo.",
+      "errorSubscribe": "No se pudo actualizar. Inténtalo de nuevo."
+    }
+  },
   "login": {
     "tagline": "El espejo que recuerda",
     "emailLabel": "Email",

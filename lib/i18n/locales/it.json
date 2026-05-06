@@ -136,6 +136,37 @@
     "editPalette": "Modifica palette",
     "signOut": "Esci"
   },
+  "push": {
+    "prompt": {
+      "label": "Notifiche",
+      "body": "Lascia che Mnemo ti richiami quando un frammento è pronto a tornare. Puoi cambiare in ogni momento dal Profilo.",
+      "enable": "Abilita",
+      "enabling": "Abilito…",
+      "notNow": "Non ora",
+      "denied": "Le notifiche sono state bloccate. Abilitale dalle impostazioni del browser per ricevere i richiami.",
+      "error": "Non è stato possibile abilitare le notifiche. Riprova."
+    },
+    "prefs": {
+      "title": "Notifiche",
+      "unsupported": "Questo dispositivo o browser non supporta le notifiche push. Su iPhone, installa Mnemo sulla schermata Home.",
+      "deniedHint": "Le notifiche sono bloccate. Abilitale dalle impostazioni del browser e poi torna qui.",
+      "master": "Notifiche push",
+      "masterHint": "Ricevi le notifiche di Mnemo su questo dispositivo.",
+      "nudge": "Richiami discreti",
+      "nudgeHint": "Un richiamo gentile quando non scrivi da un po'.",
+      "nudgeHour": "Ora del giorno",
+      "nudgeDays": "Dopo",
+      "dayOne": "{{count}} giorno",
+      "dayMany": "{{count}} giorni",
+      "anniversary": "Anniversari",
+      "anniversaryHint": "Segna gli anni da quando sei su Mnemo.",
+      "resurfacing": "Riemersione",
+      "resurfacingHint": "Ricevi un push quando un vecchio frammento riemerge - anche con l'app chiusa.",
+      "permissionRequired": "Serve il permesso per inviare le notifiche.",
+      "errorSave": "Salvataggio non riuscito. Riprova.",
+      "errorSubscribe": "Aggiornamento non riuscito. Riprova."
+    }
+  },
   "login": {
     "tagline": "Lo specchio che ricorda",
     "emailLabel": "Email",

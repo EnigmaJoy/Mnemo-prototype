@@ -136,6 +136,37 @@
     "editPalette": "Palette bearbeiten",
     "signOut": "Abmelden"
   },
+  "push": {
+    "prompt": {
+      "label": "Benachrichtigungen",
+      "body": "Lass dich von Mnemo zurückrufen, wenn ein Fragment bereit ist, wiederzukehren. Du kannst dies jederzeit im Profil ändern.",
+      "enable": "Aktivieren",
+      "enabling": "Aktiviere…",
+      "notNow": "Nicht jetzt",
+      "denied": "Benachrichtigungen wurden blockiert. Aktiviere sie in den Browsereinstellungen, um Erinnerungen zu erhalten.",
+      "error": "Benachrichtigungen konnten nicht aktiviert werden. Versuche es erneut."
+    },
+    "prefs": {
+      "title": "Benachrichtigungen",
+      "unsupported": "Dieses Gerät oder dieser Browser unterstützt keine Push-Benachrichtigungen. Auf dem iPhone Mnemo bitte zum Home-Bildschirm hinzufügen.",
+      "deniedHint": "Benachrichtigungen sind blockiert. Aktiviere sie in den Browsereinstellungen und kehre dann hierher zurück.",
+      "master": "Push-Benachrichtigungen",
+      "masterHint": "Erhalte Mnemo-Benachrichtigungen auf diesem Gerät.",
+      "nudge": "Leise Erinnerungen",
+      "nudgeHint": "Ein sanfter Hinweis, wenn du eine Weile nichts geschrieben hast.",
+      "nudgeHour": "Tageszeit",
+      "nudgeDays": "Nach",
+      "dayOne": "{{count}} Tag",
+      "dayMany": "{{count}} Tage",
+      "anniversary": "Jahrestage",
+      "anniversaryHint": "Markiere die Jahre, seit du Mnemo nutzt.",
+      "resurfacing": "Wiederkehr",
+      "resurfacingHint": "Erhalte einen Push, wenn ein altes Fragment zurückkehrt - auch wenn die App geschlossen ist.",
+      "permissionRequired": "Berechtigung zum Senden von Benachrichtigungen erforderlich.",
+      "errorSave": "Speichern fehlgeschlagen. Versuche es erneut.",
+      "errorSubscribe": "Aktualisierung fehlgeschlagen. Versuche es erneut."
+    }
+  },
   "login": {
     "tagline": "Der Spiegel, der erinnert",
     "emailLabel": "Email",

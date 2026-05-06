@@ -136,6 +136,37 @@
     "editPalette": "修改调色板",
     "signOut": "退出登录"
   },
+  "push": {
+    "prompt": {
+      "label": "通知",
+      "body": "让 Mnemo 在某个片段准备好回来时轻轻提醒你。你可以随时在「个人」中更改。",
+      "enable": "启用",
+      "enabling": "启用中…",
+      "notNow": "暂不",
+      "denied": "通知已被阻止。请在浏览器设置中启用，以便接收提醒。",
+      "error": "无法启用通知。请再试一次。"
+    },
+    "prefs": {
+      "title": "通知",
+      "unsupported": "此设备或浏览器不支持推送通知。在 iPhone 上，请将 Mnemo 添加到主屏幕。",
+      "deniedHint": "通知已被阻止。请在浏览器设置中启用后再回到这里。",
+      "master": "推送通知",
+      "masterHint": "在此设备上接收 Mnemo 的通知。",
+      "nudge": "轻提醒",
+      "nudgeHint": "当你一段时间没写时，发送一个温和的提醒。",
+      "nudgeHour": "时间",
+      "nudgeDays": "在",
+      "dayOne": "{{count}} 天后",
+      "dayMany": "{{count}} 天后",
+      "anniversary": "纪念日",
+      "anniversaryHint": "纪念你加入 Mnemo 以来的每一年。",
+      "resurfacing": "重现",
+      "resurfacingHint": "当旧片段重新浮现时收到推送 - 即使应用已关闭。",
+      "permissionRequired": "需要权限才能发送通知。",
+      "errorSave": "保存失败。请再试一次。",
+      "errorSubscribe": "更新失败。请再试一次。"
+    }
+  },
   "login": {
     "tagline": "记得的镜子",
     "emailLabel": "Email",

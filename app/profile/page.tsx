@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
+import NotificationPreferences from '@/components/NotificationPreferences';
 import PaletteOnboardingModal from '@/components/PaletteOnboardingModal';
 import SignOutButton from '@/components/SignOutButton';
 import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale } from '@/lib/i18n/config';
@@ -15,7 +16,14 @@ export default function ProfilePage() {
     : 'en';
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(e.target.value);
+    const next = e.target.value;
+    i18n.changeLanguage(next);
+    // Mirror locale to the server so the nudge cron picks the right prompt language.
+    void fetch('/api/notifications/preferences', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locale: next }),
+    }).catch(() => {});
   };
 
   return (
@@ -26,6 +34,8 @@ export default function ProfilePage() {
             {t('profile.title')}
           </h1>
         </header>
+
+        <NotificationPreferences />
 
         <section className="bg-mnemo-surface border border-mnemo-border rounded-lg p-5">
           <h2 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-4">

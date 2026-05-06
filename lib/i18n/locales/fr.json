@@ -136,6 +136,37 @@
     "editPalette": "Modifier la palette",
     "signOut": "Se déconnecter"
   },
+  "push": {
+    "prompt": {
+      "label": "Notifications",
+      "body": "Laisse Mnemo te rappeler quand un fragment est prêt à revenir. Tu peux changer cela à tout moment dans le Profil.",
+      "enable": "Activer",
+      "enabling": "Activation…",
+      "notNow": "Plus tard",
+      "denied": "Les notifications ont été bloquées. Active-les dans les paramètres du navigateur pour recevoir des rappels.",
+      "error": "Impossible d'activer les notifications. Réessaie."
+    },
+    "prefs": {
+      "title": "Notifications",
+      "unsupported": "Cet appareil ou ce navigateur ne prend pas en charge les notifications push. Sur iPhone, ajoute Mnemo à l'écran d'accueil.",
+      "deniedHint": "Les notifications sont bloquées. Active-les dans les paramètres du navigateur, puis reviens ici.",
+      "master": "Notifications push",
+      "masterHint": "Reçois les notifications de Mnemo sur cet appareil.",
+      "nudge": "Rappels discrets",
+      "nudgeHint": "Un rappel doux quand tu n'as pas écrit depuis un moment.",
+      "nudgeHour": "Heure",
+      "nudgeDays": "Après",
+      "dayOne": "{{count}} jour",
+      "dayMany": "{{count}} jours",
+      "anniversary": "Anniversaires",
+      "anniversaryHint": "Marque les années depuis ton arrivée sur Mnemo.",
+      "resurfacing": "Réapparitions",
+      "resurfacingHint": "Reçois un push quand un ancien fragment revient - même si l'application est fermée.",
+      "permissionRequired": "Permission requise pour envoyer des notifications.",
+      "errorSave": "Échec de l'enregistrement. Réessaie.",
+      "errorSubscribe": "Échec de la mise à jour. Réessaie."
+    }
+  },
   "login": {
     "tagline": "Le miroir qui se souvient",
     "emailLabel": "Email",

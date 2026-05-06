@@ -136,6 +136,37 @@
     "editPalette": "Edit palette",
     "signOut": "Sign out"
   },
+  "push": {
+    "prompt": {
+      "label": "Notifications",
+      "body": "Let Mnemo nudge you back when a fragment is ready to return. You can change this any time in Profile.",
+      "enable": "Enable",
+      "enabling": "Enabling…",
+      "notNow": "Not now",
+      "denied": "Notifications were blocked. Enable them in your browser settings to receive nudges.",
+      "error": "Couldn't enable notifications. Try again."
+    },
+    "prefs": {
+      "title": "Notifications",
+      "unsupported": "This device or browser doesn't support push notifications. On iPhone, install Mnemo to your Home Screen.",
+      "deniedHint": "Notifications are blocked. Enable them in your browser settings, then return here.",
+      "master": "Push notifications",
+      "masterHint": "Receive Mnemo notifications on this device.",
+      "nudge": "Quiet nudges",
+      "nudgeHint": "A gentle reminder when you haven't written in a while.",
+      "nudgeHour": "Time of day",
+      "nudgeDays": "After",
+      "dayOne": "{{count}} day",
+      "dayMany": "{{count}} days",
+      "anniversary": "Anniversaries",
+      "anniversaryHint": "Mark the years since you joined Mnemo.",
+      "resurfacing": "Resurfacing",
+      "resurfacingHint": "Send a push when a past fragment returns - even if the app is closed.",
+      "permissionRequired": "Permission required to send notifications.",
+      "errorSave": "Couldn't save. Try again.",
+      "errorSubscribe": "Couldn't update subscription. Try again."
+    }
+  },
   "login": {
     "tagline": "The mirror that remembers",
     "emailLabel": "Email",
