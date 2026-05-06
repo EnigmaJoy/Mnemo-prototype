@@ -35,9 +35,7 @@ export default function ProfilePage() {
           </h1>
         </header>
 
-        <NotificationPreferences />
-
-        <section className="bg-mnemo-surface border border-mnemo-border rounded-lg p-5">
+        <section className="bg-mnemo-surface border border-mnemo-border rounded-lg p-5 mb-2">
           <h2 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-4">
             {t('profile.settings')}
           </h2>
@@ -47,15 +45,15 @@ export default function ProfilePage() {
               {t('profile.language')}
             </span>
             <select
-              id="language"
-              value={current}
-              onChange={handleChange}
-              className="w-full bg-mnemo-bg border border-mnemo-border rounded px-3 py-2 font-dm-sans text-sm text-mnemo-ink focus:outline-none focus:border-mnemo-ink"
+                id="language"
+                value={current}
+                onChange={handleChange}
+                className="w-full bg-mnemo-bg border border-mnemo-border rounded px-3 py-2 font-dm-sans text-sm text-mnemo-ink focus:outline-none focus:border-mnemo-ink"
             >
               {SUPPORTED_LOCALES.map((loc) => (
-                <option key={loc} value={loc}>
-                  {LOCALE_LABELS[loc]}
-                </option>
+                  <option key={loc} value={loc}>
+                    {LOCALE_LABELS[loc]}
+                  </option>
               ))}
             </select>
           </label>
@@ -65,14 +63,16 @@ export default function ProfilePage() {
               {t('profile.palette')}
             </span>
             <button
-              type="button"
-              onClick={() => setPaletteEditOpen(true)}
-              className="w-full text-left bg-mnemo-bg border border-mnemo-border rounded px-3 py-2 font-dm-sans text-sm text-mnemo-ink hover:border-mnemo-ink"
+                type="button"
+                onClick={() => setPaletteEditOpen(true)}
+                className="w-full text-left bg-mnemo-bg border border-mnemo-border rounded px-3 py-2 font-dm-sans text-sm text-mnemo-ink hover:border-mnemo-ink"
             >
               {t('profile.editPalette')}
             </button>
           </div>
         </section>
+
+        <NotificationPreferences />
 
         <SignOutButton />
       </main>

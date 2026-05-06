@@ -150,6 +150,7 @@
       "title": "Notifications",
       "unsupported": "Cet appareil ou ce navigateur ne prend pas en charge les notifications push. Sur iPhone, ajoute Mnemo à l'écran d'accueil.",
       "deniedHint": "Les notifications sont bloquées. Active-les dans les paramètres du navigateur, puis reviens ici.",
+      "armedHint": "Enregistre tes préférences ici - elles s'activeront dès que tu actives les notifications push.",
       "master": "Notifications push",
       "masterHint": "Reçois les notifications de Mnemo sur cet appareil.",
       "nudge": "Rappels discrets",

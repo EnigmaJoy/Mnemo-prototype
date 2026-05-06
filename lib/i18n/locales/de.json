@@ -150,6 +150,7 @@
       "title": "Benachrichtigungen",
       "unsupported": "Dieses Gerät oder dieser Browser unterstützt keine Push-Benachrichtigungen. Auf dem iPhone Mnemo bitte zum Home-Bildschirm hinzufügen.",
       "deniedHint": "Benachrichtigungen sind blockiert. Aktiviere sie in den Browsereinstellungen und kehre dann hierher zurück.",
+      "armedHint": "Speichere deine Einstellungen hier - sie werden aktiv, sobald du Push-Benachrichtigungen aktivierst.",
       "master": "Push-Benachrichtigungen",
       "masterHint": "Erhalte Mnemo-Benachrichtigungen auf diesem Gerät.",
       "nudge": "Leise Erinnerungen",

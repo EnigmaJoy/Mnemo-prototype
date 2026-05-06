@@ -150,6 +150,7 @@
       "title": "通知",
       "unsupported": "此设备或浏览器不支持推送通知。在 iPhone 上，请将 Mnemo 添加到主屏幕。",
       "deniedHint": "通知已被阻止。请在浏览器设置中启用后再回到这里。",
+      "armedHint": "在这里保存你的偏好 - 一旦启用推送通知，它们就会立即生效。",
       "master": "推送通知",
       "masterHint": "在此设备上接收 Mnemo 的通知。",
       "nudge": "轻提醒",

@@ -150,6 +150,7 @@
       "title": "Notifications",
       "unsupported": "This device or browser doesn't support push notifications. On iPhone, install Mnemo to your Home Screen.",
       "deniedHint": "Notifications are blocked. Enable them in your browser settings, then return here.",
+      "armedHint": "Save your preferences here - they'll take effect as soon as you enable push notifications.",
       "master": "Push notifications",
       "masterHint": "Receive Mnemo notifications on this device.",
       "nudge": "Quiet nudges",

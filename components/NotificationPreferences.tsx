@@ -160,8 +160,6 @@ export default function NotificationPreferences() {
     }
   };
 
-  const sectionDisabled = !subscribed;
-
   return (
     <section className="bg-mnemo-surface border border-mnemo-border rounded-lg p-5 mb-6">
       <h2 className="font-dm-mono text-[10px] uppercase tracking-[0.18em] text-mnemo-ink-secondary mb-4">
@@ -190,26 +188,30 @@ export default function NotificationPreferences() {
             onChange={handleToggleSubscription}
           />
 
+          {!subscribed && permission !== 'denied' && (
+            <p className="font-dm-sans text-xs text-mnemo-ink-tertiary mt-1 mb-2">
+              {t('push.prefs.armedHint')}
+            </p>
+          )}
+
           <div className="border-t border-mnemo-border my-2" />
 
           <Toggle
             label={t('push.prefs.nudge')}
             description={t('push.prefs.nudgeHint')}
             checked={prefs.nudge_enabled}
-            disabled={busy || loading || sectionDisabled}
+            disabled={busy || loading}
             onChange={(v) => savePartial({ nudge_enabled: v })}
           />
 
           <div className="grid grid-cols-2 gap-4 py-2">
-            <label
-              className={`block ${sectionDisabled || !prefs.nudge_enabled ? 'opacity-50' : ''}`}
-            >
+            <label className="block">
               <span className="font-dm-sans text-xs text-mnemo-ink-secondary block mb-1">
                 {t('push.prefs.nudgeHour')}
               </span>
               <select
                 value={prefs.nudge_hour}
-                disabled={busy || loading || sectionDisabled || !prefs.nudge_enabled}
+                disabled={busy || loading}
                 onChange={(e) => savePartial({ nudge_hour: Number(e.target.value) })}
                 className="w-full bg-mnemo-bg border border-mnemo-border rounded px-2 py-2 font-dm-sans text-sm text-mnemo-ink focus:outline-none focus:border-mnemo-ink"
               >
@@ -220,15 +222,13 @@ export default function NotificationPreferences() {
                 ))}
               </select>
             </label>
-            <label
-              className={`block ${sectionDisabled || !prefs.nudge_enabled ? 'opacity-50' : ''}`}
-            >
+            <label className="block">
               <span className="font-dm-sans text-xs text-mnemo-ink-secondary block mb-1">
                 {t('push.prefs.nudgeDays')}
               </span>
               <select
                 value={prefs.nudge_days_inactive}
-                disabled={busy || loading || sectionDisabled || !prefs.nudge_enabled}
+                disabled={busy || loading}
                 onChange={(e) => savePartial({ nudge_days_inactive: Number(e.target.value) })}
                 className="w-full bg-mnemo-bg border border-mnemo-border rounded px-2 py-2 font-dm-sans text-sm text-mnemo-ink focus:outline-none focus:border-mnemo-ink"
               >
@@ -247,7 +247,7 @@ export default function NotificationPreferences() {
             label={t('push.prefs.anniversary')}
             description={t('push.prefs.anniversaryHint')}
             checked={prefs.anniversary_enabled}
-            disabled={busy || loading || sectionDisabled}
+            disabled={busy || loading}
             onChange={(v) => savePartial({ anniversary_enabled: v })}
           />
 
@@ -255,7 +255,7 @@ export default function NotificationPreferences() {
             label={t('push.prefs.resurfacing')}
             description={t('push.prefs.resurfacingHint')}
             checked={prefs.resurfacing_enabled}
-            disabled={busy || loading || sectionDisabled}
+            disabled={busy || loading}
             onChange={(v) => savePartial({ resurfacing_enabled: v })}
           />
 

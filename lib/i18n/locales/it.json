@@ -150,6 +150,7 @@
       "title": "Notifiche",
       "unsupported": "Questo dispositivo o browser non supporta le notifiche push. Su iPhone, installa Mnemo sulla schermata Home.",
       "deniedHint": "Le notifiche sono bloccate. Abilitale dalle impostazioni del browser e poi torna qui.",
+      "armedHint": "Salva qui le tue preferenze - saranno attive non appena abiliterai le notifiche push.",
       "master": "Notifiche push",
       "masterHint": "Ricevi le notifiche di Mnemo su questo dispositivo.",
       "nudge": "Richiami discreti",
