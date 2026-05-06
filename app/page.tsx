@@ -8,12 +8,21 @@ import Logo from '@/components/Logo';
 import BottomNav from '@/components/BottomNav';
 import FragmentItem from '@/components/FragmentItem';
 import ResurfaceBanner from '@/components/ResurfaceBanner';
+import SentimentGrid from '@/components/SentimentGrid';
+import PaletteOnboardingModal from '@/components/PaletteOnboardingModal';
+import {
+  DEFAULT_PALETTE,
+  getPalette,
+  isPaletteOnboarded,
+  type Palette,
+} from '@/lib/palette';
 import {
   getAllFragments,
   getEarliestFragment,
   getFragmentCount,
   getFragmentsCreatedToday,
   isFragmentStorageAvailable,
+  migrateFragmentSentiments,
 } from '@/controllers/fragmentController';
 import {
   dismissCandidate,
@@ -39,6 +48,7 @@ export default function HomePage() {
 
   const [hydrated, setHydrated] = useState(false);
   const [recent, setRecent] = useState<Fragment[]>([]);
+  const [allFragments, setAllFragments] = useState<Fragment[]>([]);
   const [candidate, setCandidate] = useState<ResurfacingCandidate | null>(null);
   const [storageOk, setStorageOk] = useState(true);
   const [hadResurfacing, setHadResurfacing] = useState(false);
@@ -47,12 +57,16 @@ export default function HomePage() {
   const [recurringWord, setRecurringWord] = useState<string | null>(null);
   const [savedToday, setSavedToday] = useState(0);
   const [todaysPromptIdx, setTodaysPromptIdx] = useState(0);
+  const [palette, setPaletteState] = useState<Palette>(DEFAULT_PALETTE);
+  const [showPaletteOnboarding, setShowPaletteOnboarding] = useState(false);
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
     setStorageOk(isFragmentStorageAvailable());
+    migrateFragmentSentiments();
 
     const all = getAllFragments();
+    setAllFragments(all);
     setFragmentCount(getFragmentCount());
     setRecent(all.slice(0, RECENT_COUNT));
     setHadResurfacing(hasFirstResurfacingHappened());
@@ -67,6 +81,9 @@ export default function HomePage() {
     const promptsRaw = t('home.dailyPrompt.prompts', { returnObjects: true });
     const promptCount = Array.isArray(promptsRaw) ? promptsRaw.length : 0;
     setTodaysPromptIdx(pickPromptIndexForMoment(new Date(), promptCount));
+
+    setPaletteState(getPalette());
+    setShowPaletteOnboarding(!isPaletteOnboarded());
 
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -107,6 +124,8 @@ export default function HomePage() {
             mnemo
           </span>
         </header>
+
+        {hydrated && <SentimentGrid fragments={allFragments} palette={palette} />}
 
         {hydrated && !storageOk && (
           <div className="bg-mnemo-surface border border-mnemo-border rounded-lg p-4 mb-6 text-sm font-dm-sans text-mnemo-ink-secondary">
@@ -217,6 +236,13 @@ export default function HomePage() {
       </Link>
 
       <BottomNav />
+
+      <PaletteOnboardingModal
+        open={hydrated && showPaletteOnboarding}
+        mode="onboarding"
+        onClose={() => setShowPaletteOnboarding(false)}
+        onSaved={(p) => setPaletteState(p)}
+      />
     </>
   );
 }

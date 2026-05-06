@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
+import PaletteOnboardingModal from '@/components/PaletteOnboardingModal';
 import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale } from '@/lib/i18n/config';
 
 export default function ProfilePage() {
   const { t, i18n } = useTranslation();
+  const [paletteEditOpen, setPaletteEditOpen] = useState(false);
   const current = (SUPPORTED_LOCALES as readonly string[]).includes(i18n.language)
     ? (i18n.language as Locale)
     : 'en';
@@ -28,12 +31,12 @@ export default function ProfilePage() {
             {t('profile.settings')}
           </h2>
 
-          <label className="block">
+          <label className="block mb-5">
             <span className="font-dm-sans text-sm text-mnemo-ink-secondary block mb-2">
               {t('profile.language')}
             </span>
             <select
-                id="language"
+              id="language"
               value={current}
               onChange={handleChange}
               className="w-full bg-mnemo-bg border border-mnemo-border rounded px-3 py-2 font-dm-sans text-sm text-mnemo-ink focus:outline-none focus:border-mnemo-ink"
@@ -45,9 +48,28 @@ export default function ProfilePage() {
               ))}
             </select>
           </label>
+
+          <div>
+            <span className="font-dm-sans text-sm text-mnemo-ink-secondary block mb-2">
+              {t('profile.palette')}
+            </span>
+            <button
+              type="button"
+              onClick={() => setPaletteEditOpen(true)}
+              className="w-full text-left bg-mnemo-bg border border-mnemo-border rounded px-3 py-2 font-dm-sans text-sm text-mnemo-ink hover:border-mnemo-ink"
+            >
+              {t('profile.editPalette')}
+            </button>
+          </div>
         </section>
       </main>
       <BottomNav />
+
+      <PaletteOnboardingModal
+        open={paletteEditOpen}
+        mode="edit"
+        onClose={() => setPaletteEditOpen(false)}
+      />
     </>
   );
 }

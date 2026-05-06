@@ -131,6 +131,40 @@
   "profile": {
     "title": "Profilo",
     "settings": "Impostazioni",
-    "language": "Lingua"
+    "language": "Lingua",
+    "palette": "Colori dei sentimenti",
+    "editPalette": "Modifica palette"
+  },
+  "paletteOnboarding": {
+    "stepLabel": "Passo {{step}} di {{total}}",
+    "skip": "Salta",
+    "continue": "Continua",
+    "done": "Fatto",
+    "swatchAria": "Scegli {{color}}",
+    "intro": {
+      "title": "Una griglia per le tue settimane",
+      "body": "Ogni quadratino è un giorno. Il colore racconta come ti sei sentito. Scegli la tua palette - sei colori, una per ogni emozione. Puoi sempre cambiarla dal Profilo."
+    },
+    "choose": {
+      "title": "Scegli i tuoi colori",
+      "body": "Tocca un cerchio per ogni emozione. Quello selezionato resta evidenziato."
+    },
+    "preview": {
+      "title": "Anteprima",
+      "body": "Ecco come apparirà la tua griglia con i colori scelti."
+    }
+  },
+  "sentimentGrid": {
+    "label": "Le tue settimane",
+    "tooltipCount_one": "{{count}} frammento",
+    "tooltipCount_other": "{{count}} frammenti",
+    "sentiments": {
+      "reflective": "Riflessivo",
+      "positive": "Positivo",
+      "negative": "Pesante",
+      "energetic": "Energico",
+      "uncertain": "Incerto",
+      "neutral": "Neutro"
+    }
   }
 }

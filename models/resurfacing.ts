@@ -4,7 +4,7 @@ export interface Resurface {
   fragmentId: string;
   shownAt: string;
   reaction: 'still_true' | 'changed' | 'archived' | null;
-  triggerType: 'day_7' | 'day_14' | 'day_30';
+  triggerType: 'day_7' | 'day_14' | 'day_30' | 'day_60';
 }
 
 export interface ResurfacingCandidate {
@@ -14,6 +14,7 @@ export interface ResurfacingCandidate {
 
 export const MS_PER_DAY = 86_400_000;
 
+// TODO: must be a var that changes with the user's settings
 export const DAYS_TO_FIRST_RESURFACE = 7;
 
 const TRIGGER_WINDOWS: ReadonlyArray<{
@@ -24,12 +25,14 @@ const TRIGGER_WINDOWS: ReadonlyArray<{
   { type: 'day_7',  min: 6,  max: 8  },
   { type: 'day_14', min: 13, max: 15 },
   { type: 'day_30', min: 29, max: 31 },
+  { type: 'day_60', min: 59, max: 61 },
 ];
 
 const TRIGGER_DAYS: Record<Resurface['triggerType'], number> = {
   day_7: 7,
   day_14: 14,
   day_30: 30,
+  day_60: 60,
 };
 
 export function getTriggerDays(triggerType: Resurface['triggerType']): number {

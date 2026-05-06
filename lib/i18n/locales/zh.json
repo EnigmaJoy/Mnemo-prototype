@@ -131,6 +131,40 @@
   "profile": {
     "title": "个人",
     "settings": "设置",
-    "language": "语言"
+    "language": "语言",
+    "palette": "情绪颜色",
+    "editPalette": "修改调色板"
+  },
+  "paletteOnboarding": {
+    "stepLabel": "第 {{step}} 步，共 {{total}} 步",
+    "skip": "跳过",
+    "continue": "继续",
+    "done": "完成",
+    "swatchAria": "选择 {{color}}",
+    "intro": {
+      "title": "属于你的周历",
+      "body": "每个小方块代表一天。颜色记录你的心情。选择你的调色板——六种颜色，每种对应一种情绪。你随时可以在「个人」中修改。"
+    },
+    "choose": {
+      "title": "选择你的颜色",
+      "body": "为每种情绪点选一个圆。被选中的会保持突出显示。"
+    },
+    "preview": {
+      "title": "预览",
+      "body": "这就是你的方格在所选颜色下的样子。"
+    }
+  },
+  "sentimentGrid": {
+    "label": "你的几周",
+    "tooltipCount_one": "{{count}} 个片段",
+    "tooltipCount_other": "{{count}} 个片段",
+    "sentiments": {
+      "reflective": "沉思",
+      "positive": "积极",
+      "negative": "沉重",
+      "energetic": "充满活力",
+      "uncertain": "不确定",
+      "neutral": "中性"
+    }
   }
 }

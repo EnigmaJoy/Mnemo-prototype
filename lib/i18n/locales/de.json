@@ -131,6 +131,40 @@
   "profile": {
     "title": "Profil",
     "settings": "Einstellungen",
-    "language": "Sprache"
+    "language": "Sprache",
+    "palette": "Stimmungsfarben",
+    "editPalette": "Palette bearbeiten"
+  },
+  "paletteOnboarding": {
+    "stepLabel": "Schritt {{step}} von {{total}}",
+    "skip": "Überspringen",
+    "continue": "Weiter",
+    "done": "Fertig",
+    "swatchAria": "{{color}} wählen",
+    "intro": {
+      "title": "Ein Raster für deine Wochen",
+      "body": "Jedes Quadrat ist ein Tag. Die Farbe zeigt, wie du dich gefühlt hast. Wähle deine Palette - sechs Farben, eine pro Stimmung. Du kannst sie jederzeit im Profil ändern."
+    },
+    "choose": {
+      "title": "Wähle deine Farben",
+      "body": "Tippe für jede Stimmung auf einen Kreis. Die ausgewählte Farbe bleibt markiert."
+    },
+    "preview": {
+      "title": "Vorschau",
+      "body": "So sieht dein Raster mit den gewählten Farben aus."
+    }
+  },
+  "sentimentGrid": {
+    "label": "Deine Wochen",
+    "tooltipCount_one": "{{count}} Fragment",
+    "tooltipCount_other": "{{count}} Fragmente",
+    "sentiments": {
+      "reflective": "Nachdenklich",
+      "positive": "Positiv",
+      "negative": "Schwer",
+      "energetic": "Energisch",
+      "uncertain": "Unsicher",
+      "neutral": "Neutral"
+    }
   }
 }

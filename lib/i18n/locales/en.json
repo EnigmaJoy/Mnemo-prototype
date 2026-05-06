@@ -131,6 +131,40 @@
   "profile": {
     "title": "Profile",
     "settings": "Settings",
-    "language": "Language"
+    "language": "Language",
+    "palette": "Sentiment colors",
+    "editPalette": "Edit palette"
+  },
+  "paletteOnboarding": {
+    "stepLabel": "Step {{step}} of {{total}}",
+    "skip": "Skip",
+    "continue": "Continue",
+    "done": "Done",
+    "swatchAria": "Choose {{color}}",
+    "intro": {
+      "title": "A grid for your weeks",
+      "body": "Each square is a day. Colour tells the story of how you felt. Pick your palette - six colours, one per emotion. You can change them later from your Profile."
+    },
+    "choose": {
+      "title": "Choose your colours",
+      "body": "Tap a circle for each emotion. The selected one stays highlighted."
+    },
+    "preview": {
+      "title": "Preview",
+      "body": "Here's how your grid will look with the colours you picked."
+    }
+  },
+  "sentimentGrid": {
+    "label": "Your weeks",
+    "tooltipCount_one": "{{count}} fragment",
+    "tooltipCount_other": "{{count}} fragments",
+    "sentiments": {
+      "reflective": "Reflective",
+      "positive": "Positive",
+      "negative": "Heavy",
+      "energetic": "Energetic",
+      "uncertain": "Uncertain",
+      "neutral": "Neutral"
+    }
   }
 }

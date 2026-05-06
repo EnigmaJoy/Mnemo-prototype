@@ -131,6 +131,40 @@
   "profile": {
     "title": "Perfil",
     "settings": "Ajustes",
-    "language": "Idioma"
+    "language": "Idioma",
+    "palette": "Colores de las emociones",
+    "editPalette": "Editar paleta"
+  },
+  "paletteOnboarding": {
+    "stepLabel": "Paso {{step}} de {{total}}",
+    "skip": "Omitir",
+    "continue": "Continuar",
+    "done": "Listo",
+    "swatchAria": "Elegir {{color}}",
+    "intro": {
+      "title": "Una cuadrícula para tus semanas",
+      "body": "Cada cuadrado es un día. El color cuenta cómo te has sentido. Elige tu paleta - seis colores, uno por emoción. Puedes cambiarla cuando quieras desde tu Perfil."
+    },
+    "choose": {
+      "title": "Elige tus colores",
+      "body": "Toca un círculo para cada emoción. El seleccionado queda resaltado."
+    },
+    "preview": {
+      "title": "Vista previa",
+      "body": "Así se verá tu cuadrícula con los colores que elegiste."
+    }
+  },
+  "sentimentGrid": {
+    "label": "Tus semanas",
+    "tooltipCount_one": "{{count}} fragmento",
+    "tooltipCount_other": "{{count}} fragmentos",
+    "sentiments": {
+      "reflective": "Reflexivo",
+      "positive": "Positivo",
+      "negative": "Pesado",
+      "energetic": "Enérgico",
+      "uncertain": "Incierto",
+      "neutral": "Neutro"
+    }
   }
 }

@@ -15,6 +15,9 @@ import {
 } from '@/lib/storage';
 import { deleteAudioBlob } from '@/lib/audio/db';
 import { saveAudioBlob } from '@/lib/audio/db';
+import { detectSentiment } from '@/lib/sentiment';
+
+const SENTIMENT_MIGRATION_FLAG = 'mnemo_sentiment_migration_v1';
 
 export function isFragmentStorageAvailable(): boolean {
   return isStorageAvailable();
@@ -57,6 +60,7 @@ export async function saveTextFragment(content: string): Promise<Fragment> {
     createdAt: iso,
     updatedAt: iso,
     type: 'text',
+    sentimentCode: detectSentiment(trimmed),
   };
   writeFragment(fragment);
   return fragment;
@@ -70,16 +74,41 @@ export async function saveAudioFragment(
   const audioId = `audio-${id}`;
   await saveAudioBlob(audioId, blob);
   const iso = new Date().toISOString();
+  const trimmed = transcript.trim();
   const fragment: Fragment = {
     id,
-    content: transcript.trim(),
+    content: trimmed,
     createdAt: iso,
     updatedAt: iso,
     type: 'audio',
     audioId,
+    sentimentCode: detectSentiment(trimmed),
   };
   writeFragment(fragment);
   return fragment;
+}
+
+export function migrateFragmentSentiments(): void {
+  if (!isStorageAvailable()) return;
+  try {
+    if (localStorage.getItem(SENTIMENT_MIGRATION_FLAG) === 'true') return;
+  } catch {
+    return;
+  }
+
+  for (const fragment of readFragments()) {
+    if (fragment.sentimentCode) continue;
+    writeFragment({
+      ...fragment,
+      sentimentCode: detectSentiment(fragment.content),
+    });
+  }
+
+  try {
+    localStorage.setItem(SENTIMENT_MIGRATION_FLAG, 'true');
+  } catch {
+    /* migration will retry next load; harmless */
+  }
 }
 
 export async function deleteFragment(id: string): Promise<void> {

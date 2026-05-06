@@ -1,3 +1,5 @@
+import type { SentimentCode } from '@/lib/sentiment';
+
 export interface Fragment {
   id: string;
   content: string;
@@ -5,6 +7,7 @@ export interface Fragment {
   updatedAt: string;
   type?: 'text' | 'audio';
   audioId?: string;
+  sentimentCode?: SentimentCode;
 }
 
 export function sortFragmentsNewestFirst(fragments: Fragment[]): Fragment[] {
