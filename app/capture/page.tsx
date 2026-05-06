@@ -34,6 +34,7 @@ export default function CapturePage() {
   const [placeholderOverride, setPlaceholderOverride] = useState<string | null>(null);
   const [audioSupported, setAudioSupported] = useState(true);
   const [showUnsavedModal, setShowUnsavedModal] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const [recState, setRecState] = useState<RecState>('idle');
   const [recError, setRecError] = useState<string | null>(null);
@@ -104,12 +105,17 @@ export default function CapturePage() {
 
   const handleSaveAndNew = async () => {
     setShowUnsavedModal(false);
-    if (mode === 'text' && content.trim().length > 0) {
-      await saveTextFragment(content);
-    } else if (mode === 'audio' && recordedBlob && transcript.trim().length > 0) {
-      await saveAudioFragment(transcript, recordedBlob);
+    setSaveError(null);
+    try {
+      if (mode === 'text' && content.trim().length > 0) {
+        await saveTextFragment(content);
+      } else if (mode === 'audio' && recordedBlob && transcript.trim().length > 0) {
+        await saveAudioFragment(transcript, recordedBlob);
+      }
+      resetAll();
+    } catch {
+      setSaveError(t('capture.saveFailed'));
     }
-    resetAll();
   };
 
   const handleDiscardAndNew = () => {
@@ -194,7 +200,13 @@ export default function CapturePage() {
 
   const handleSaveText = async () => {
     if (content.trim().length === 0 || saved) return;
-    await saveTextFragment(content);
+    setSaveError(null);
+    try {
+      await saveTextFragment(content);
+    } catch {
+      setSaveError(t('capture.saveFailed'));
+      return;
+    }
     setSaved(true);
     redirectTimeoutRef.current = setTimeout(() => router.push('/'), SAVED_REDIRECT_MS);
   };
@@ -319,7 +331,13 @@ export default function CapturePage() {
                 className="w-full bg-transparent border-0 outline-none resize-none font-cormorant italic text-[18px] leading-relaxed text-mnemo-ink placeholder:text-mnemo-ink-tertiary py-2 min-h-40"
               />
             </div>
-            <div className="flex justify-end mb-8">
+            <div className="flex justify-between items-start mb-8">
+              <span
+                role="alert"
+                className="font-dm-sans text-xs text-red-600"
+              >
+                {saveError ?? ''}
+              </span>
               <span
                 className={`font-dm-mono text-[10px] tabular-nums ${
                   counterRed ? 'text-red-600' : 'text-mnemo-ink-tertiary'

@@ -7,48 +7,49 @@ import {
   type MonthGroup,
 } from '@/models/fragment';
 import {
-  deleteFragment as removeFragment,
-  deleteResurfacingByFragmentId,
-  getFragments as readFragments,
-  isStorageAvailable,
-  saveFragment as writeFragment,
-} from '@/lib/storage';
-import { deleteAudioBlob } from '@/lib/audio/db';
-import { saveAudioBlob } from '@/lib/audio/db';
+  deleteFragmentRemote,
+  loadFragments,
+  upsertFragment,
+} from '@/lib/fragments';
+import { isStorageAvailable } from '@/lib/storage';
+import { deleteAudioBlob, saveAudioBlob } from '@/lib/audio/db';
 import { detectSentiment } from '@/lib/sentiment';
 
-const SENTIMENT_MIGRATION_FLAG = 'mnemo_sentiment_migration_v1';
-
+// `isStorageAvailable` still drives the "private-mode warning" banner on Home.
+// localStorage is no longer the source of truth for fragments, but we still
+// touch it for ephemeral state (dismissed ids, locale) and for the one-shot
+// migration. If it's blocked we want to tell the user.
 export function isFragmentStorageAvailable(): boolean {
   return isStorageAvailable();
 }
 
-export function getAllFragments(): Fragment[] {
-  return sortFragmentsNewestFirst(readFragments());
+export async function getAllFragments(): Promise<Fragment[]> {
+  return sortFragmentsNewestFirst(await loadFragments());
 }
 
-export function getRecentFragments(count: number): Fragment[] {
-  return getAllFragments().slice(0, count);
+export async function getRecentFragments(count: number): Promise<Fragment[]> {
+  return (await getAllFragments()).slice(0, count);
 }
 
-export function getFragmentById(id: string): Fragment | null {
-  return readFragments().find((fragment) => fragment.id === id) ?? null;
+export async function getFragmentById(id: string): Promise<Fragment | null> {
+  const all = await loadFragments();
+  return all.find((fragment) => fragment.id === id) ?? null;
 }
 
-export function getFragmentCount(): number {
-  return readFragments().length;
+export async function getFragmentCount(): Promise<number> {
+  return (await loadFragments()).length;
 }
 
-export function getEarliestFragment(): Fragment | null {
-  return findEarliestFragment(readFragments());
+export async function getEarliestFragment(): Promise<Fragment | null> {
+  return findEarliestFragment(await loadFragments());
 }
 
-export function getFragmentsCreatedToday(now: Date = new Date()): number {
-  return countFragmentsCreatedOn(readFragments(), now);
+export async function getFragmentsCreatedToday(now: Date = new Date()): Promise<number> {
+  return countFragmentsCreatedOn(await loadFragments(), now);
 }
 
-export function getFragmentsGroupedByMonth(): MonthGroup[] {
-  return groupFragmentsByMonth(getAllFragments());
+export async function getFragmentsGroupedByMonth(): Promise<MonthGroup[]> {
+  return groupFragmentsByMonth(await getAllFragments());
 }
 
 export async function saveTextFragment(content: string): Promise<Fragment> {
@@ -62,8 +63,7 @@ export async function saveTextFragment(content: string): Promise<Fragment> {
     type: 'text',
     sentimentCode: detectSentiment(trimmed),
   };
-  writeFragment(fragment);
-  return fragment;
+  return upsertFragment(fragment);
 }
 
 export async function saveAudioFragment(
@@ -72,6 +72,8 @@ export async function saveAudioFragment(
 ): Promise<Fragment> {
   const id = crypto.randomUUID();
   const audioId = `audio-${id}`;
+  // Audio blob stays in IndexedDB on this device (Phase 1 = D1 option B).
+  // Server stores metadata only; audio_url stays NULL until Storage migration.
   await saveAudioBlob(audioId, blob);
   const iso = new Date().toISOString();
   const trimmed = transcript.trim();
@@ -84,43 +86,19 @@ export async function saveAudioFragment(
     audioId,
     sentimentCode: detectSentiment(trimmed),
   };
-  writeFragment(fragment);
-  return fragment;
-}
-
-export function migrateFragmentSentiments(): void {
-  if (!isStorageAvailable()) return;
-  try {
-    if (localStorage.getItem(SENTIMENT_MIGRATION_FLAG) === 'true') return;
-  } catch {
-    return;
-  }
-
-  for (const fragment of readFragments()) {
-    if (fragment.sentimentCode) continue;
-    writeFragment({
-      ...fragment,
-      sentimentCode: detectSentiment(fragment.content),
-    });
-  }
-
-  try {
-    localStorage.setItem(SENTIMENT_MIGRATION_FLAG, 'true');
-  } catch {
-    /* migration will retry next load; harmless */
-  }
+  return upsertFragment(fragment);
 }
 
 export async function deleteFragment(id: string): Promise<void> {
-  const target = readFragments().find((fragment) => fragment.id === id);
+  const all = await loadFragments();
+  const target = all.find((fragment) => fragment.id === id);
   if (target?.type === 'audio' && target.audioId) {
     try {
       await deleteAudioBlob(target.audioId);
     } catch {
-      /* blob already gone or storage error; metadata removal is the source of truth */
+      /* blob already gone or storage error; server delete is the source of truth */
     }
   }
-  removeFragment(id);
-  deleteResurfacingByFragmentId(id);
+  // resurfacings cascade via FK on the server side
+  await deleteFragmentRemote(id);
 }
-

@@ -23,7 +23,6 @@ import {
   getFragmentCount,
   getFragmentsCreatedToday,
   isFragmentStorageAvailable,
-  migrateFragmentSentiments,
 } from '@/controllers/fragmentController';
 import {
   dismissCandidate,
@@ -60,24 +59,12 @@ export default function HomePage() {
   const [todaysPromptIdx, setTodaysPromptIdx] = useState(0);
   const [palette, setPaletteState] = useState<Palette>(DEFAULT_PALETTE);
   const [showPaletteOnboarding, setShowPaletteOnboarding] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
     /* eslint-disable react-hooks/set-state-in-effect */
     setStorageOk(isFragmentStorageAvailable());
-    migrateFragmentSentiments();
-
-    const all = getAllFragments();
-    setAllFragments(all);
-    setFragmentCount(getFragmentCount());
-    setRecent(all.slice(0, RECENT_COUNT));
-    setHadResurfacing(hasFirstResurfacingHappened());
-    setCandidate(getCandidateToResurface());
-
-    const earliest = getEarliestFragment();
-    setDaysFromEarliest(earliest ? daysSince(earliest.createdAt) : null);
-
-    setRecurringWord(findRecurringWord(all, i18n.language));
-    setSavedToday(getFragmentsCreatedToday());
 
     const promptsRaw = t('home.dailyPrompt.prompts', { returnObjects: true });
     const promptCount = Array.isArray(promptsRaw) ? promptsRaw.length : 0;
@@ -86,8 +73,39 @@ export default function HomePage() {
     setPaletteState(getPalette());
     setShowPaletteOnboarding(!isPaletteOnboarded());
 
-    setHydrated(true);
+    void (async () => {
+      try {
+        const [all, count, hadResurfacingFlag, candidateRow, earliest, savedTodayCount] =
+          await Promise.all([
+            getAllFragments(),
+            getFragmentCount(),
+            hasFirstResurfacingHappened(),
+            getCandidateToResurface(),
+            getEarliestFragment(),
+            getFragmentsCreatedToday(),
+          ]);
+        if (cancelled) return;
+        setAllFragments(all);
+        setFragmentCount(count);
+        setRecent(all.slice(0, RECENT_COUNT));
+        setHadResurfacing(hadResurfacingFlag);
+        setCandidate(candidateRow);
+        setDaysFromEarliest(earliest ? daysSince(earliest.createdAt) : null);
+        setRecurringWord(findRecurringWord(all, i18n.language));
+        setSavedToday(savedTodayCount);
+      } catch (err) {
+        if (!cancelled) {
+          setLoadError(err instanceof Error ? err.message : 'load failed');
+        }
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    })();
     /* eslint-enable react-hooks/set-state-in-effect */
+
+    return () => {
+      cancelled = true;
+    };
   }, [i18n.language, t]);
 
   const showOnboarding = hydrated && !hadResurfacing && !candidate;
@@ -133,6 +151,12 @@ export default function HomePage() {
         {hydrated && !storageOk && (
           <div className="bg-mnemo-surface border border-mnemo-border rounded-lg p-4 mb-6 text-sm font-dm-sans text-mnemo-ink-secondary">
             {t('home.storageUnavailable')}
+          </div>
+        )}
+
+        {hydrated && loadError && (
+          <div className="bg-mnemo-surface border border-mnemo-border rounded-lg p-4 mb-6 text-sm font-dm-sans text-mnemo-ink-secondary">
+            {t('home.loadError')}
           </div>
         )}
 

@@ -14,6 +14,7 @@
     "profile": "Profil"
   },
   "home": {
+    "loadError": "Deine Fragmente konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
     "storageUnavailable": "Mnemo funktioniert am besten, wenn Speicher verfügbar ist. Manche Browser blockieren ihn im privaten Modus.",
     "empty": "Hier ist noch nichts. Beginne mit einem Gedanken - etwas, das du in einem Jahr wiederfinden möchtest.",
     "newFragmentAria": "Neues Fragment",
@@ -68,6 +69,7 @@
     "title": "Neues Fragment",
     "tabsAria": "Aufnahmemodus",
     "placeholder": "Woran denkst du?",
+    "saveFailed": "Speichern fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.",
     "saved": "Gespeichert. Es kehrt wieder, wenn die Zeit reif ist.",
     "morning": "Morgen",
     "afternoon": "Nachmittag",

@@ -14,6 +14,7 @@
     "profile": "Perfil"
   },
   "home": {
+    "loadError": "No se pudieron cargar tus fragmentos. Comprueba tu conexión e inténtalo de nuevo.",
     "storageUnavailable": "Mnemo funciona mejor cuando el almacenamiento está disponible. Algunos navegadores lo bloquean en modo privado.",
     "empty": "Aún no hay nada aquí. Comienza con un pensamiento - algo que quisieras encontrar dentro de un año.",
     "newFragmentAria": "Nuevo fragmento",
@@ -68,6 +69,7 @@
     "title": "Nuevo fragmento",
     "tabsAria": "Modo de captura",
     "placeholder": "¿En qué estás pensando?",
+    "saveFailed": "No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.",
     "saved": "Guardado. Volverá cuando llegue su momento.",
     "morning": "Mañana",
     "afternoon": "Tarde",

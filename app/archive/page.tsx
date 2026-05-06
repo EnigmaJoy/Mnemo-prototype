@@ -18,22 +18,36 @@ export default function ArchivePage() {
   const [hydrated, setHydrated] = useState(false);
   const [groups, setGroups] = useState<MonthGroup[]>([]);
   const [fragments, setFragments] = useState<Fragment[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  const reloadFragments = () => {
-    setGroups(getFragmentsGroupedByMonth());
-    setFragments(getAllFragments());
+  const reloadFragments = async () => {
+    try {
+      const [g, all] = await Promise.all([
+        getFragmentsGroupedByMonth(),
+        getAllFragments(),
+      ]);
+      setGroups(g);
+      setFragments(all);
+      setLoadError(null);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : 'load failed');
+    }
   };
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
-    reloadFragments();
-    setHydrated(true);
-    /* eslint-enable react-hooks/set-state-in-effect */
+    let cancelled = false;
+    void (async () => {
+      await reloadFragments();
+      if (!cancelled) setHydrated(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleDelete = async (id: string) => {
     await deleteFragment(id);
-    reloadFragments();
+    await reloadFragments();
   };
 
   const handleExport = () => {
@@ -58,7 +72,13 @@ export default function ArchivePage() {
           )}
         </header>
 
-        {hydrated && fragments.length === 0 && (
+        {hydrated && loadError && (
+          <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
+            {t('home.loadError')}
+          </p>
+        )}
+
+        {hydrated && !loadError && fragments.length === 0 && (
           <p className="font-cormorant italic text-xl text-mnemo-ink-secondary leading-relaxed mt-12">
             {t('archive.empty')}
           </p>

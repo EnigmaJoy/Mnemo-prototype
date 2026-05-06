@@ -8,24 +8,22 @@ import {
 } from '@/models/resurfacing';
 import type { Fragment } from '@/models/fragment';
 import {
-  addDismissedId,
-  getDismissedIds,
-  getFragments as readFragments,
-  getResurfacingHistory as readResurfacingHistory,
-  saveResurfacing,
-  updateResurfacing,
-} from '@/lib/storage';
+  loadFragments,
+  loadResurfacings,
+  upsertResurfacing,
+} from '@/lib/fragments';
+import { addDismissedId, getDismissedIds } from '@/lib/storage';
 
-export function getCandidateToResurface(): ResurfacingCandidate | null {
-  return selectResurfacingCandidate(
-    readFragments(),
-    readResurfacingHistory(),
-    getDismissedIds(),
-  );
+export async function getCandidateToResurface(): Promise<ResurfacingCandidate | null> {
+  const [fragments, history] = await Promise.all([
+    loadFragments(),
+    loadResurfacings(),
+  ]);
+  return selectResurfacingCandidate(fragments, history, getDismissedIds());
 }
 
-export function hasFirstResurfacingHappened(): boolean {
-  return hasHadFirstResurfacing(readResurfacingHistory());
+export async function hasFirstResurfacingHappened(): Promise<boolean> {
+  return hasHadFirstResurfacing(await loadResurfacings());
 }
 
 export interface ResurfaceContext {
@@ -34,11 +32,14 @@ export interface ResurfaceContext {
   triggerType: Resurface['triggerType'] | null;
 }
 
-export function loadResurfaceContext(id: string): ResurfaceContext | null {
-  const fragment = readFragments().find((f) => f.id === id);
+export async function loadResurfaceContext(id: string): Promise<ResurfaceContext | null> {
+  const [fragments, history] = await Promise.all([
+    loadFragments(),
+    loadResurfacings(),
+  ]);
+  const fragment = fragments.find((f) => f.id === id);
   if (!fragment) return null;
 
-  const history = readResurfacingHistory();
   const existing = history.find((record) => record.fragmentId === id);
   if (existing) {
     return { fragment, record: existing, triggerType: existing.triggerType };
@@ -55,15 +56,29 @@ export function loadResurfaceContext(id: string): ResurfaceContext | null {
     reaction: null,
     triggerType: computedTrigger,
   };
-  saveResurfacing(fresh);
-  return { fragment, record: fresh, triggerType: computedTrigger };
+  const saved = await upsertResurfacing(fresh);
+  return { fragment, record: saved, triggerType: saved.triggerType };
 }
 
-export function saveReaction(
+export async function saveReaction(
   fragmentId: string,
   reaction: NonNullable<Resurface['reaction']>,
-): void {
-  updateResurfacing(fragmentId, reaction);
+): Promise<void> {
+  const history = await loadResurfacings();
+  const existing = history.find((r) => r.fragmentId === fragmentId);
+  // If no record yet (edge case: user hits a Reaction button before
+  // loadResurfaceContext has completed), seed one with the current trigger.
+  const fragments = await loadFragments();
+  const fragment = fragments.find((f) => f.id === fragmentId);
+  if (!fragment) return;
+  const triggerType =
+    existing?.triggerType ?? getTriggerType(daysSince(fragment.createdAt)) ?? 'day_7';
+  await upsertResurfacing({
+    fragmentId,
+    shownAt: existing?.shownAt ?? new Date().toISOString(),
+    reaction,
+    triggerType,
+  });
 }
 
 export function dismissCandidate(fragmentId: string): void {

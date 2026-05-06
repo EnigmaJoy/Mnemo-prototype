@@ -22,16 +22,26 @@ export default function ResurfaceDetailPage() {
   const [context, setContext] = useState<ResurfaceContext | null>(null);
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
+    let cancelled = false;
     if (!id) return;
-    setContext(loadResurfaceContext(id));
-    setHydrated(true);
-    /* eslint-enable react-hooks/set-state-in-effect */
+    void (async () => {
+      try {
+        const ctx = await loadResurfaceContext(id);
+        if (!cancelled) setContext(ctx);
+      } catch {
+        if (!cancelled) setContext(null);
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const handleReact = (reaction: 'still_true' | 'changed' | 'archived') => {
     if (!context) return;
-    saveReaction(context.fragment.id, reaction);
+    void saveReaction(context.fragment.id, reaction);
   };
 
   return (

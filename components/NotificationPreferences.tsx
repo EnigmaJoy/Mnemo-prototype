@@ -74,7 +74,7 @@ export default function NotificationPreferences() {
       const sub = await getCurrentSubscription();
       if (!cancelled) setSubscribed(!!sub);
 
-      const earliest = getEarliestFragment();
+      const earliest = await getEarliestFragment().catch(() => null);
       const firstFragmentAt = earliest ? earliest.createdAt : null;
 
       const tz = detectTimezone();

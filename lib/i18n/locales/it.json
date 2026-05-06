@@ -15,6 +15,7 @@
   },
   "home": {
     "storageUnavailable": "Mnemo funziona al meglio quando è disponibile lo spazio di archiviazione. Alcuni browser lo bloccano in modalità privata.",
+    "loadError": "Impossibile caricare i tuoi frammenti. Controlla la connessione e riprova.",
     "empty": "Ancora nulla qui. Comincia con un pensiero - qualcosa che vorresti ritrovare fra un anno.",
     "newFragmentAria": "Nuovo frammento",
     "firstResurfacing": {
@@ -69,6 +70,7 @@
     "tabsAria": "Modalità di cattura",
     "placeholder": "A cosa stai pensando?",
     "saved": "Salvato. Tornerà quando sarà il momento giusto.",
+    "saveFailed": "Salvataggio non riuscito. Controlla la connessione e riprova.",
     "morning": "Mattina",
     "afternoon": "Pomeriggio",
     "evening": "Sera",

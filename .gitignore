@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# supabase cli
+# Local CLI state — contains project-ref, pooler/connection URL, version metadata.
+# `supabase/functions/` IS tracked (app code). The folders below are CLI-managed
+# and machine-specific.
+supabase/.temp/
+supabase/.branches/
+supabase/.env
+supabase/config.toml.local

@@ -15,6 +15,7 @@
   },
   "home": {
     "storageUnavailable": "Mnemo works best when storage is available. Some browsers block this in private mode.",
+    "loadError": "Couldn't load your fragments. Check your connection and try again.",
     "empty": "Nothing here yet. Start with one thought - anything you'd want to find a year from now.",
     "newFragmentAria": "New fragment",
     "firstResurfacing": {
@@ -69,6 +70,7 @@
     "tabsAria": "Capture mode",
     "placeholder": "What's on your mind?",
     "saved": "Saved. It will return when the time is right.",
+    "saveFailed": "Couldn't save. Check your connection and try again.",
     "morning": "Morning",
     "afternoon": "Afternoon",
     "evening": "Evening",

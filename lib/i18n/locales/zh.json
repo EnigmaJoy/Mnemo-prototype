@@ -14,6 +14,7 @@
     "profile": "个人"
   },
   "home": {
+    "loadError": "无法加载你的片段。请检查网络连接后再试。",
     "storageUnavailable": "当存储可用时，Mnemo 才能正常工作。某些浏览器在隐私模式下会阻止存储。",
     "empty": "这里还什么都没有。从一个想法开始--任何你希望一年后还能找到的东西。",
     "newFragmentAria": "新的片段",
@@ -68,6 +69,7 @@
     "title": "新的片段",
     "tabsAria": "记录方式",
     "placeholder": "你在想什么？",
+    "saveFailed": "保存失败。请检查网络连接后再试。",
     "saved": "已保存。时机到来时，它会回来。",
     "morning": "上午",
     "afternoon": "下午",
