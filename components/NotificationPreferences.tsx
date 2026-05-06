@@ -46,6 +46,7 @@ function detectTimezone(): string {
 
 export default function NotificationPreferences() {
   const { t, i18n } = useTranslation();
+  const [hydrated, setHydrated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
   const [subscribed, setSubscribed] = useState(false);
@@ -61,6 +62,7 @@ export default function NotificationPreferences() {
     let cancelled = false;
 
     /* eslint-disable react-hooks/set-state-in-effect */
+    setHydrated(true);
     if (!supported) {
       setPermission('unsupported');
       setLoading(false);
@@ -159,6 +161,17 @@ export default function NotificationPreferences() {
       setBusy(false);
     }
   };
+
+  if (!hydrated) {
+    // SSR / pre-hydration: render a stable placeholder so we never produce a
+    // tree that depends on browser APIs (Notification.permission) or on i18n
+    // resources the server bundle might not yet have hot-reloaded.
+    return (
+      <section className="bg-mnemo-surface border border-mnemo-border rounded-lg p-5 mb-6">
+        <div className="h-4" />
+      </section>
+    );
+  }
 
   return (
     <section className="bg-mnemo-surface border border-mnemo-border rounded-lg p-5 mb-6">
