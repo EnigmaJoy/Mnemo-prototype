@@ -133,7 +133,22 @@
     "settings": "Settings",
     "language": "Language",
     "palette": "Sentiment colors",
-    "editPalette": "Edit palette"
+    "editPalette": "Edit palette",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "tagline": "The mirror that remembers",
+    "headline": "Enter your email to continue.",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Send magic link",
+    "submitting": "Sending…",
+    "successTitle": "Check your email.",
+    "successBody": "We sent a link to {{email}}. Open it to enter Mnemo.",
+    "errors": {
+      "invalidEmail": "That email doesn't look right.",
+      "rateLimit": "Too many requests. Try again in a few minutes.",
+      "generic": "Something went wrong. Try again."
+    }
   },
   "paletteOnboarding": {
     "stepLabel": "Step {{step}} of {{total}}",

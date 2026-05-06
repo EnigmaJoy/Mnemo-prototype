@@ -133,7 +133,22 @@
     "settings": "设置",
     "language": "语言",
     "palette": "情绪颜色",
-    "editPalette": "修改调色板"
+    "editPalette": "修改调色板",
+    "signOut": "退出登录"
+  },
+  "login": {
+    "tagline": "记得的镜子",
+    "headline": "输入你的邮箱以继续。",
+    "emailPlaceholder": "you@email.com",
+    "submit": "发送登录链接",
+    "submitting": "发送中…",
+    "successTitle": "请查收你的邮件。",
+    "successBody": "我们已将链接发送到 {{email}}。打开它进入 Mnemo。",
+    "errors": {
+      "invalidEmail": "这个邮箱看起来不正确。",
+      "rateLimit": "请求过多。请几分钟后再试。",
+      "generic": "出了点问题。请再试一次。"
+    }
   },
   "paletteOnboarding": {
     "stepLabel": "第 {{step}} 步，共 {{total}} 步",

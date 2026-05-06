@@ -133,7 +133,22 @@
     "settings": "Paramètres",
     "language": "Langue",
     "palette": "Couleurs des émotions",
-    "editPalette": "Modifier la palette"
+    "editPalette": "Modifier la palette",
+    "signOut": "Se déconnecter"
+  },
+  "login": {
+    "tagline": "Le miroir qui se souvient",
+    "headline": "Saisis ton email pour continuer.",
+    "emailPlaceholder": "toi@email.com",
+    "submit": "Envoyer le lien magique",
+    "submitting": "Envoi…",
+    "successTitle": "Vérifie ta boîte mail.",
+    "successBody": "Nous avons envoyé un lien à {{email}}. Ouvre-le pour entrer dans Mnemo.",
+    "errors": {
+      "invalidEmail": "Cet email ne semble pas valide.",
+      "rateLimit": "Trop de demandes. Réessaie dans quelques minutes.",
+      "generic": "Quelque chose a mal tourné. Réessaie."
+    }
   },
   "paletteOnboarding": {
     "stepLabel": "Étape {{step}} sur {{total}}",

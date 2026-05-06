@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BottomNav from '@/components/BottomNav';
 import PaletteOnboardingModal from '@/components/PaletteOnboardingModal';
+import SignOutButton from '@/components/SignOutButton';
 import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale } from '@/lib/i18n/config';
 
 export default function ProfilePage() {
@@ -62,6 +63,8 @@ export default function ProfilePage() {
             </button>
           </div>
         </section>
+
+        <SignOutButton />
       </main>
       <BottomNav />
 

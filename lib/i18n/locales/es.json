@@ -133,7 +133,22 @@
     "settings": "Ajustes",
     "language": "Idioma",
     "palette": "Colores de las emociones",
-    "editPalette": "Editar paleta"
+    "editPalette": "Editar paleta",
+    "signOut": "Cerrar sesión"
+  },
+  "login": {
+    "tagline": "El espejo que recuerda",
+    "headline": "Introduce tu correo para continuar.",
+    "emailPlaceholder": "tu@email.com",
+    "submit": "Enviar enlace mágico",
+    "submitting": "Enviando…",
+    "successTitle": "Revisa tu correo.",
+    "successBody": "Hemos enviado un enlace a {{email}}. Ábrelo para entrar en Mnemo.",
+    "errors": {
+      "invalidEmail": "Ese correo no parece válido.",
+      "rateLimit": "Demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
   },
   "paletteOnboarding": {
     "stepLabel": "Paso {{step}} de {{total}}",

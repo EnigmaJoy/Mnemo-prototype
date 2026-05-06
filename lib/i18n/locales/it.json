@@ -133,7 +133,22 @@
     "settings": "Impostazioni",
     "language": "Lingua",
     "palette": "Colori dei sentimenti",
-    "editPalette": "Modifica palette"
+    "editPalette": "Modifica palette",
+    "signOut": "Esci"
+  },
+  "login": {
+    "tagline": "Lo specchio che ricorda",
+    "headline": "Inserisci la tua email per continuare.",
+    "emailPlaceholder": "tu@email.com",
+    "submit": "Invia link magico",
+    "submitting": "Invio in corso…",
+    "successTitle": "Controlla la tua email.",
+    "successBody": "Abbiamo mandato un link a {{email}}. Aprilo per entrare in Mnemo.",
+    "errors": {
+      "invalidEmail": "Questa email non sembra valida.",
+      "rateLimit": "Troppe richieste. Riprova tra qualche minuto.",
+      "generic": "Qualcosa è andato storto. Riprova."
+    }
   },
   "paletteOnboarding": {
     "stepLabel": "Passo {{step}} di {{total}}",

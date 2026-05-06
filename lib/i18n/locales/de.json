@@ -133,7 +133,22 @@
     "settings": "Einstellungen",
     "language": "Sprache",
     "palette": "Stimmungsfarben",
-    "editPalette": "Palette bearbeiten"
+    "editPalette": "Palette bearbeiten",
+    "signOut": "Abmelden"
+  },
+  "login": {
+    "tagline": "Der Spiegel, der erinnert",
+    "headline": "Gib deine E-Mail ein, um fortzufahren.",
+    "emailPlaceholder": "du@email.com",
+    "submit": "Magischen Link senden",
+    "submitting": "Wird gesendet…",
+    "successTitle": "Sieh in dein Postfach.",
+    "successBody": "Wir haben einen Link an {{email}} geschickt. Öffne ihn, um Mnemo zu betreten.",
+    "errors": {
+      "invalidEmail": "Diese E-Mail scheint nicht gültig zu sein.",
+      "rateLimit": "Zu viele Anfragen. Versuche es in ein paar Minuten erneut.",
+      "generic": "Etwas ist schiefgelaufen. Versuche es erneut."
+    }
   },
   "paletteOnboarding": {
     "stepLabel": "Schritt {{step}} von {{total}}",
