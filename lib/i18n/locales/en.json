@@ -138,9 +138,9 @@
   },
   "login": {
     "tagline": "The mirror that remembers",
-    "headline": "Enter your email to continue.",
+    "emailLabel": "Email",
     "emailPlaceholder": "your@email.com",
-    "submit": "Send magic link",
+    "signIn": "Sign in",
     "submitting": "Sending…",
     "successTitle": "Check your email.",
     "successBody": "We sent a link to {{email}}. Open it to enter Mnemo.",

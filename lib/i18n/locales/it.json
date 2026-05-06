@@ -138,9 +138,9 @@
   },
   "login": {
     "tagline": "Lo specchio che ricorda",
-    "headline": "Inserisci la tua email per continuare.",
+    "emailLabel": "Email",
     "emailPlaceholder": "tu@email.com",
-    "submit": "Invia link magico",
+    "signIn": "Accedi",
     "submitting": "Invio in corso…",
     "successTitle": "Controlla la tua email.",
     "successBody": "Abbiamo mandato un link a {{email}}. Aprilo per entrare in Mnemo.",

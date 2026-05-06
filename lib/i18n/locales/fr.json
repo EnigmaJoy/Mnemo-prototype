@@ -138,9 +138,9 @@
   },
   "login": {
     "tagline": "Le miroir qui se souvient",
-    "headline": "Saisis ton email pour continuer.",
+    "emailLabel": "Email",
     "emailPlaceholder": "toi@email.com",
-    "submit": "Envoyer le lien magique",
+    "signIn": "Se connecter",
     "submitting": "Envoi…",
     "successTitle": "Vérifie ta boîte mail.",
     "successBody": "Nous avons envoyé un lien à {{email}}. Ouvre-le pour entrer dans Mnemo.",

@@ -138,9 +138,9 @@
   },
   "login": {
     "tagline": "Der Spiegel, der erinnert",
-    "headline": "Gib deine E-Mail ein, um fortzufahren.",
+    "emailLabel": "Email",
     "emailPlaceholder": "du@email.com",
-    "submit": "Magischen Link senden",
+    "signIn": "Anmelden",
     "submitting": "Wird gesendet…",
     "successTitle": "Sieh in dein Postfach.",
     "successBody": "Wir haben einen Link an {{email}} geschickt. Öffne ihn, um Mnemo zu betreten.",

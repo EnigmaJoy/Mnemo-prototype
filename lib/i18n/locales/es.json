@@ -138,9 +138,9 @@
   },
   "login": {
     "tagline": "El espejo que recuerda",
-    "headline": "Introduce tu correo para continuar.",
+    "emailLabel": "Email",
     "emailPlaceholder": "tu@email.com",
-    "submit": "Enviar enlace mágico",
+    "signIn": "Entrar",
     "submitting": "Enviando…",
     "successTitle": "Revisa tu correo.",
     "successBody": "Hemos enviado un enlace a {{email}}. Ábrelo para entrar en Mnemo.",
